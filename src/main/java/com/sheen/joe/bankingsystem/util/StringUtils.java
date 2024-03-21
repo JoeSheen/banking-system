@@ -1,5 +1,8 @@
 package com.sheen.joe.bankingsystem.util;
 
+import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
+import org.apache.commons.lang3.RandomStringUtils;
+
 public class StringUtils {
 
     private StringUtils() {}
@@ -13,6 +16,24 @@ public class StringUtils {
             return str;
         }
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static String generateRandomAlphanumeric(int length, boolean startWithNumber) {
+        if (startWithNumber) {
+            return RandomStringUtils.randomNumeric(1) + RandomStringUtils.randomAlphanumeric(length - 1);
+        }
+        return RandomStringUtils.randomAlphanumeric(length);
+    }
+
+    public static String formatPhoneNumberString(String phoneNumber) {
+        if (isNullOrEmpty(phoneNumber) || !phoneNumber.matches("[0-9]+") || phoneNumber.length() != 11) {
+            throw new InvalidRequestException("Phone number contains an invalid character(s)");
+        }
+        String start = phoneNumber.substring(0, 5);
+        if (start.charAt(0) == '0') {
+            start = "+44 " + start.substring(1);
+        }
+        return start + " " + phoneNumber.substring(5);
     }
 
 }
