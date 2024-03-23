@@ -68,6 +68,7 @@ class AuthenticationMapperTest {
 
         assertNotNull(responseDto);
         assertEquals(UUID.fromString("1f1deb3c-c3a5-4fac-842c-a729010405c6"), responseDto.id());
+        assertEquals("ChloeWilliams0yMtXj", responseDto.username());
         assertEquals("Chloe", responseDto.firstName());
         assertEquals("Williams", responseDto.lastName());
         assertEquals("fake-token", responseDto.token());
@@ -75,6 +76,7 @@ class AuthenticationMapperTest {
 
     private User buildUserForTest() {
         UUID id = UUID.fromString("1f1deb3c-c3a5-4fac-842c-a729010405c6");
-        return User.builder().id(id).firstName("Chloe").lastName("Williams").build();
+        return User.builder().id(id).firstName("Chloe").lastName("Williams")
+                .username("ChloeWilliams0yMtXj").build();
     }
 }
