@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.entity;
 
+import com.sheen.joe.bankingsystem.annotation.MinAge;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -31,6 +32,8 @@ public class User {
 
     @Past
     @NotNull
+    @MinAge(message = "Bank users must be 16 or over")
+    @Column(updatable = false)
     private LocalDate dateOfBirth;
 
     @NotNull
