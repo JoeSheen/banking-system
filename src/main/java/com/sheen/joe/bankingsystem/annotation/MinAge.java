@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = MinAgeValidator.class)
 public @interface MinAge {
-    String message() default "";
+    String message() default "com.sheen.joe.bankingsystem.annotation.MinAge.message";
 
     Class<?>[] groups() default {};
 
