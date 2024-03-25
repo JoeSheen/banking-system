@@ -45,6 +45,25 @@ class StringUtilsTest {
     }
 
     @Test
+    void testGenerateRandomNumeric() {
+        String result = StringUtils.generateRandomNumeric(16);
+        assertEquals(16, result.length());
+        for (char c : result.toCharArray()) {
+            assertTrue(Character.isDigit(c));
+        }
+    }
+
+    @Test
+    void testGenerateAndFormatCardNumber() {
+        String result = StringUtils.generateAndFormatCardNumber();
+        System.out.println(result);
+        assertEquals(19, result.length()); // 16 digits + 3 spaces
+        for (char c : result.toCharArray()) {
+            assertTrue(Character.isDigit(c) || Character.isWhitespace(c));
+        }
+    }
+
+    @Test
     void testFormatPhoneNumberString() {
         String result = StringUtils.formatPhoneNumberString("01234567890");
         assertEquals("+44 1234 567890", result);
