@@ -25,7 +25,7 @@ class UserMapperTest {
     }
 
     @Test
-    void toUserResponse() {
+    void testToUserResponse() {
         UserResponseDto responseDto = userMapper.toUserResponse(user);
         assertNotNull(responseDto);
         assertEquals(UUID.fromString("5d0d6908-40f6-4c3a-9390-2ddf40ae6437"), responseDto.id());
