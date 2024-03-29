@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -58,8 +59,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Page<AccountResponseDto> getAllUserAccounts(int pageNumber, int pageSize, boolean closed, String sort) {
-        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(sort));
+    public Page<AccountResponseDto> getAllUserAccounts(int pageNumber, int pageSize, boolean closed, String sortProperty) {
+        Sort sort = Sort.by(new Order(Sort.Direction.DESC, sortProperty));
+        Pageable paging = PageRequest.of(pageNumber, pageSize, sort);
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
         return accountRepository.findAllUserAccounts(closed, userId, paging).map(accountMapper::toAccountResponse);
     }

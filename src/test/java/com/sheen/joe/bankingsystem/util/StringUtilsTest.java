@@ -56,7 +56,6 @@ class StringUtilsTest {
     @Test
     void testGenerateAndFormatCardNumber() {
         String result = StringUtils.generateAndFormatCardNumber();
-        System.out.println(result);
         assertEquals(19, result.length()); // 16 digits + 3 spaces
         for (char c : result.toCharArray()) {
             assertTrue(Character.isDigit(c) || Character.isWhitespace(c));

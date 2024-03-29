@@ -41,8 +41,9 @@ public class AccountController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AccountResponseDto>> getAll(@RequestParam(defaultValue = "0") Integer pageNumber,
             @RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "false") Boolean closed,
-            @RequestParam(defaultValue = "updatedAt") String sort) {
-        Page<AccountResponseDto> accountResponsePage = accountService.getAllUserAccounts(pageNumber, pageSize, closed, sort);
+            @RequestParam(defaultValue = "updatedAt") String sortProperty) {
+        Page<AccountResponseDto> accountResponsePage = accountService
+                .getAllUserAccounts(pageNumber, pageSize, closed, sortProperty);
         log.info("Page {} contains {} account(s)", accountResponsePage.getNumber(), accountResponsePage.getNumberOfElements());
         return new ResponseEntity<>(accountResponsePage, HttpStatus.OK);
     }

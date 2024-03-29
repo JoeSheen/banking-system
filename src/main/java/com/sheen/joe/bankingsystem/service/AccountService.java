@@ -13,7 +13,7 @@ public interface AccountService {
 
     AccountResponseDto updateAccount(UUID id, AccountRequestDto accountRequestDto);
 
-    Page<AccountResponseDto> getAllUserAccounts(int pageNumber, int pageSize, boolean closed, String sort);
+    Page<AccountResponseDto> getAllUserAccounts(int pageNumber, int pageSize, boolean closed, String sortProperty);
 
     AccountResponseDto getAccountById(UUID id);
 
