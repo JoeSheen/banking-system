@@ -46,7 +46,6 @@ public class Account {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(insertable = false)
     private LocalDateTime updatedAt;
 
 }
