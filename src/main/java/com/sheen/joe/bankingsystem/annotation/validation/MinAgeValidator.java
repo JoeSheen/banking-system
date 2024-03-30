@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 public class MinAgeValidator implements ConstraintValidator<MinAge, LocalDate> {
@@ -18,6 +19,10 @@ public class MinAgeValidator implements ConstraintValidator<MinAge, LocalDate> {
 
     @Override
     public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
-        return ChronoUnit.YEARS.between(value, LocalDate.now()) >= MIN_AGE;
+        boolean valid = false;
+        if (value != null) {
+            return ChronoUnit.YEARS.between(value, LocalDate.now(ZoneId.of("UTC"))) >= MIN_AGE;
+        }
+        return valid;
     }
 }

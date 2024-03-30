@@ -49,4 +49,11 @@ class MinAgeTest {
         assertFalse(result);
     }
 
+    @Test
+    void testIsValidReturnsFalseWithNullValue() {
+        minAgeValidator.initialize(minAge);
+        boolean result = minAgeValidator.isValid(null, context);
+        assertFalse(result);
+    }
+
 }
