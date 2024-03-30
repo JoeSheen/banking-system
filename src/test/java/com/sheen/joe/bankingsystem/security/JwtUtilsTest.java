@@ -1,6 +1,6 @@
 package com.sheen.joe.bankingsystem.security;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.sheen.joe.bankingsystem.exception.TokenVerificationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,11 +69,11 @@ class JwtUtilsTest {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNYXJpYURhdmlzMUEyTlo3Iiw" +
                 "iaWF0IjoxNzEwODgwMDMwLCJleHAiOjE3MTA4ODA2MzB9.P3o7xs0e-0eIBr0-wFcuaOYODOEkXIxqftjkPnuK97E";
 
-        JWTVerificationException exception = assertThrows(JWTVerificationException.class, () ->
+        TokenVerificationException exception = assertThrows(TokenVerificationException.class, () ->
                 jwtUtils.validateToken(token));
 
         String actualMessage = exception.getMessage();
-        String expectedMessage = "Failed to verify JWT: The Token has expired on 2024-03-19T20:37:10Z";
+        String expectedMessage = "The Token has expired on 2024-03-19T20:37:10Z";
 
         assertTrue(actualMessage.contains(expectedMessage));
     }
