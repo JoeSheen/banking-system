@@ -45,6 +45,12 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.14.0</version>
 		</dependency>
+		<!-- PASSAY -->
+		<dependency>
+			<groupId>org.passay</groupId>
+			<artifactId>passay</artifactId>
+			<version>1.6.4</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>

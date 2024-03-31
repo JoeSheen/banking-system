@@ -1,5 +1,7 @@
 package com.sheen.joe.bankingsystem.dto;
 
+import com.sheen.joe.bankingsystem.annotation.ValidPassword;
+
 import java.time.LocalDate;
 
 public record RegisterRequestDto(
@@ -8,5 +10,6 @@ public record RegisterRequestDto(
         LocalDate dateOfBirth,
         String phoneNumber,
         String email,
+        @ValidPassword
         String password
 ) {}
