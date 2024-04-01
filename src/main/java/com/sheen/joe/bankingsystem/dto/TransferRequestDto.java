@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.dto;
 
+import com.sheen.joe.bankingsystem.entity.TransferCategory;
 import com.sheen.joe.bankingsystem.entity.TransferType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,5 +15,6 @@ public record TransferRequestDto(
         TransferType transferType,
         @Positive
         BigDecimal amount,
-        String reference
+        String reference,
+        TransferCategory category
 ) {}

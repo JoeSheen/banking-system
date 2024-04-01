@@ -1,6 +1,7 @@
 package com.sheen.joe.bankingsystem.dto;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 public record UserResponseDto(
@@ -10,5 +11,6 @@ public record UserResponseDto(
         LocalDate dateOfBirth,
         String phoneNumber,
         String email,
-        String username
+        String username,
+        Set<AccountSummaryDto> accounts
 ) {}

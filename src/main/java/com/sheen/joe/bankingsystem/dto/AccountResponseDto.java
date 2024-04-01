@@ -2,6 +2,7 @@ package com.sheen.joe.bankingsystem.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record AccountResponseDto(
@@ -11,6 +12,7 @@ public record AccountResponseDto(
         String cardNumber,
         String cvc,
         BigDecimal balance,
+        List<TransferSummaryDto> transfers,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

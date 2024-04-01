@@ -2,6 +2,7 @@ package com.sheen.joe.bankingsystem.controller;
 
 import com.sheen.joe.bankingsystem.dto.TransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.TransferResponseDto;
+import com.sheen.joe.bankingsystem.entity.TransferCategory;
 import com.sheen.joe.bankingsystem.entity.TransferType;
 import com.sheen.joe.bankingsystem.service.TransferService;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ class TransferControllerTest {
         when(transferService.createTransfer(any(TransferRequestDto.class))).thenReturn(buildTransferResponseForTest());
 
         TransferRequestDto requestDto = new TransferRequestDto("12345678", TransferType.DEPOSIT,
-                new BigDecimal("1500.47"), "reference");
+                new BigDecimal("1500.47"), "reference", TransferCategory.TRAVEL);
         ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.create(requestDto);
 
         assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
@@ -66,13 +67,17 @@ class TransferControllerTest {
     private void assertTransferResponse(TransferResponseDto transferResponseDto) {
         assertNotNull(transferResponseDto);
         assertEquals(UUID.fromString("ff9efba8-7953-4065-8499-5f86cb3bc226"), transferResponseDto.id());
+        assertEquals(TransferType.DEPOSIT, transferResponseDto.type());
         assertEquals(new BigDecimal("1500.47"), transferResponseDto.amount());
+        assertEquals("reference", transferResponseDto.reference());
+        assertEquals(TransferCategory.TRAVEL, transferResponseDto.category());
         assertEquals(LocalDateTime.of(2024, Month.MARCH, 29, 20, 11, 3), transferResponseDto.timestamp());
     }
 
     private TransferResponseDto buildTransferResponseForTest() {
         UUID id = UUID.fromString("ff9efba8-7953-4065-8499-5f86cb3bc226");
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.MARCH, 29, 20, 11, 3);
-        return new TransferResponseDto(id, new BigDecimal("1500.47"), timestamp);
+        return new TransferResponseDto(id, TransferType.DEPOSIT, new BigDecimal("1500.47"),
+                "reference", TransferCategory.TRAVEL, timestamp);
     }
 }

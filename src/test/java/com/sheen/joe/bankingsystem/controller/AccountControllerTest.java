@@ -2,6 +2,7 @@ package com.sheen.joe.bankingsystem.controller;
 
 import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
+import com.sheen.joe.bankingsystem.dto.TransferSummaryDto;
 import com.sheen.joe.bankingsystem.service.AccountService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.UUID;
 
@@ -143,6 +145,7 @@ class AccountControllerTest {
         assertEquals("1234 5678 1234 5678", accountResponseDto.cardNumber());
         assertEquals("123", accountResponseDto.cvc());
         assertEquals(BigDecimal.TEN, accountResponseDto.balance());
+        assertEquals(List.of(buildTransferSummaryDtoForTest()), accountResponseDto.transfers());
         assertEquals(LocalDateTime.of(2023, 4, 6, 12, 30, 0), accountResponseDto.createdAt());
         assertEquals(LocalDateTime.of(2024, 5, 11, 18, 45, 0), accountResponseDto.updatedAt());
     }
@@ -153,6 +156,12 @@ class AccountControllerTest {
         LocalDateTime updatedAt = LocalDateTime.of(2024, 5, 11, 18, 45, 0);
 
         return new AccountResponseDto(id, accountName, "12345678", "1234 5678 1234 5678",
-                "123", BigDecimal.TEN, createdAt, updatedAt);
+                "123", BigDecimal.TEN, List.of(buildTransferSummaryDtoForTest()), createdAt, updatedAt);
+    }
+
+    private TransferSummaryDto buildTransferSummaryDtoForTest() {
+        UUID id = UUID.fromString("2e7f9f62-ef5e-499c-bce6-565999315c22");
+        LocalDateTime now = LocalDateTime.of(2024, Month.APRIL, 1,15,38,50);
+        return new TransferSummaryDto(id, new BigDecimal("5.99"), now);
     }
 }

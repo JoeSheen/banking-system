@@ -70,10 +70,10 @@ public class TransferServiceImpl implements TransferService {
 
     private void updateAccountBalance(Account account, TransferType type, BigDecimal amount) {
         BigDecimal newBalance;
-        if (type.equals(TransferType.DEPOSIT)) {
-            newBalance = account.getBalance().add(amount);
-        } else {
-            newBalance = account.getBalance().subtract(amount);
+        switch (type) {
+            case DEPOSIT -> newBalance = account.getBalance().add(amount);
+            case WITHDRAW -> newBalance = account.getBalance().subtract(amount);
+            default -> throw new InvalidRequestException("Transfer type not supported");
         }
         account.setBalance(newBalance);
         accountRepository.save(account);

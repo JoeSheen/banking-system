@@ -2,11 +2,17 @@ package com.sheen.joe.bankingsystem.mapper.impl;
 
 import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
+import com.sheen.joe.bankingsystem.dto.TransferSummaryDto;
 import com.sheen.joe.bankingsystem.entity.Account;
+import com.sheen.joe.bankingsystem.entity.Transfer;
 import com.sheen.joe.bankingsystem.mapper.AccountMapper;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class AccountMapperImpl implements AccountMapper {
@@ -21,6 +27,17 @@ public class AccountMapperImpl implements AccountMapper {
     public AccountResponseDto toAccountResponse(Account account) {
         return new AccountResponseDto(account.getId(), account.getAccountName(),
                 account.getAccountNumber(), account.getCardNumber(), account.getCvc(),
-                account.getBalance(), account.getCreatedAt(), account.getUpdatedAt());
+                account.getBalance(), toTransferSummaries(account.getTransfers()),
+                account.getCreatedAt(), account.getUpdatedAt());
+    }
+
+    private List<TransferSummaryDto> toTransferSummaries(List<Transfer> transfers) {
+        if (transfers != null) {
+            return transfers.stream().map(transfer -> new TransferSummaryDto(transfer.getId(),
+                transfer.getAmount(), transfer.getTimestamp()))
+                .sorted(Comparator.comparing(TransferSummaryDto::timestamp,
+                        Comparator.reverseOrder())).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

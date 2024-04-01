@@ -67,7 +67,7 @@ class TransferServiceTest {
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
 
         TransferRequestDto transferRequestDto = new TransferRequestDto("12345678", TransferType.WITHDRAW,
-                BigDecimal.TEN, "reference");
+                BigDecimal.TEN, "reference", TransferCategory.EATING_OUT);
         TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
 
         assertTransferResponseDto(transferResponseDto);
@@ -80,7 +80,7 @@ class TransferServiceTest {
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
 
         TransferRequestDto transferRequestDto = new TransferRequestDto("12345678", TransferType.WITHDRAW,
-                new BigDecimal("1000.50"), "reference");
+                new BigDecimal("1000.50"), "reference", TransferCategory.EATING_OUT);
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
                 transferService.createTransfer(transferRequestDto));
 

@@ -1,6 +1,8 @@
 package com.sheen.joe.bankingsystem.service;
 
+import com.sheen.joe.bankingsystem.dto.AccountSummaryDto;
 import com.sheen.joe.bankingsystem.dto.UserResponseDto;
+import com.sheen.joe.bankingsystem.entity.Account;
 import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.UserMapper;
@@ -13,9 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +56,7 @@ class UserServiceTest {
         assertEquals("+44 1234 567890", responseDto.phoneNumber());
         assertEquals("sparrow.laura@gmail.com", responseDto.email());
         assertEquals("LauraSparrow1wjAtk", responseDto.username());
+        assertEquals(Set.of(expectedAccountSummaryDto()), responseDto.accounts());
     }
 
     @Test
@@ -71,6 +77,19 @@ class UserServiceTest {
         return User.builder().id(id).firstName("Laura").lastName("Sparrow")
                 .dateOfBirth(dateOfBirth).phoneNumber("+44 1234 567890")
                 .email("sparrow.laura@gmail.com").username("LauraSparrow1wjAtk")
-                .build();
+                .accounts(Set.of(buildAccountForTest())).build();
+    }
+
+    private Account buildAccountForTest() {
+        UUID id = UUID.fromString("5d6658ce-7a97-48a5-bb18-0cde8cdfe32c");
+        LocalDateTime updatedAt = LocalDateTime.of(2024, Month.APRIL, 1, 16, 6, 36);
+        return Account.builder().id(id).accountName("Test Account")
+                .balance(BigDecimal.ONE).updatedAt(updatedAt).build();
+    }
+
+    private AccountSummaryDto expectedAccountSummaryDto() {
+        UUID id = UUID.fromString("5d6658ce-7a97-48a5-bb18-0cde8cdfe32c");
+        LocalDateTime updatedAt = LocalDateTime.of(2024, Month.APRIL, 1, 16, 6, 36);
+        return new AccountSummaryDto(id, "Test Account", BigDecimal.ONE, updatedAt);
     }
 }

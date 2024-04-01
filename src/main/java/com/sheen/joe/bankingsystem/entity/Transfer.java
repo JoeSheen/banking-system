@@ -32,6 +32,9 @@ public class Transfer {
 
     private String reference;
 
+    @Enumerated(EnumType.ORDINAL)
+    private TransferCategory category;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
