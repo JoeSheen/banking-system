@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
+import com.sheen.joe.bankingsystem.dto.AccountCardSummaryDto;
 import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
 import com.sheen.joe.bankingsystem.dto.TransferSummaryDto;
@@ -142,8 +143,8 @@ class AccountControllerTest {
         assertEquals(UUID.fromString("7a46dedc-491e-4567-9024-499c62ba5f12"), accountResponseDto.id());
         assertEquals(expectedName, accountResponseDto.accountName());
         assertEquals("12345678", accountResponseDto.accountNumber());
-        assertEquals("1234 5678 1234 5678", accountResponseDto.cardNumber());
-        assertEquals("123", accountResponseDto.cvc());
+        assertEquals(new AccountCardSummaryDto(UUID.fromString("b706649c-630e-48f0-b1e3-5cb35caafda5"),
+                        "1234 5678 1234 5678"), accountResponseDto.card());
         assertEquals(BigDecimal.TEN, accountResponseDto.balance());
         assertEquals(List.of(buildTransferSummaryDtoForTest()), accountResponseDto.transfers());
         assertEquals(LocalDateTime.of(2023, 4, 6, 12, 30, 0), accountResponseDto.createdAt());
@@ -154,9 +155,11 @@ class AccountControllerTest {
         UUID id = UUID.fromString("7a46dedc-491e-4567-9024-499c62ba5f12");
         LocalDateTime createdAt = LocalDateTime.of(2023, 4, 6, 12, 30, 0);
         LocalDateTime updatedAt = LocalDateTime.of(2024, 5, 11, 18, 45, 0);
+        AccountCardSummaryDto card = new AccountCardSummaryDto(UUID.fromString("b706649c-630e-48f0-b1e3-5cb35caafda5"),
+                "1234 5678 1234 5678");
 
-        return new AccountResponseDto(id, accountName, "12345678", "1234 5678 1234 5678",
-                "123", BigDecimal.TEN, List.of(buildTransferSummaryDtoForTest()), createdAt, updatedAt);
+        return new AccountResponseDto(id, accountName, "12345678", card,
+                BigDecimal.TEN, List.of(buildTransferSummaryDtoForTest()), createdAt, updatedAt);
     }
 
     private TransferSummaryDto buildTransferSummaryDtoForTest() {

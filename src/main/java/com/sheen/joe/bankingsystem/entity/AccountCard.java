@@ -1,0 +1,40 @@
+package com.sheen.joe.bankingsystem.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+@Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class AccountCard {
+
+    @Id
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.TIME)
+    private UUID id;
+
+    private String cardNumber;
+
+    private String cvc;
+
+    private boolean isActive;
+
+    private LocalDate dateIssued;
+
+    private LocalDate expirationDate;
+
+    private String cardholderName;
+
+    @OneToOne(mappedBy = "accountCard")
+    private Account account;
+}

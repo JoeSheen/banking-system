@@ -3,6 +3,7 @@ package com.sheen.joe.bankingsystem.service.impl;
 import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
 import com.sheen.joe.bankingsystem.entity.Account;
+import com.sheen.joe.bankingsystem.entity.AccountCard;
 import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
@@ -23,6 +24,8 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Slf4j
@@ -99,10 +102,23 @@ public class AccountServiceImpl implements AccountService {
     private Account buildAccountForUser(AccountRequestDto accountRequestDto, User user) {
         Account account = accountMapper.toAccount(accountRequestDto);
         account.setAccountNumber(StringUtils.generateRandomNumeric(8));
-        account.setCardNumber(StringUtils.generateAndFormatCardNumber());
-        account.setCvc(StringUtils.generateRandomNumeric(3));
+        AccountCard card = buildAccountCard(account, user.getFirstName(), user.getLastName());
+        account.setAccountCard(card);
         account.setUser(user);
         return account;
+    }
+
+    private AccountCard buildAccountCard(Account account, String firstName, String lastName) {
+        String cardNumber = StringUtils.generateAndFormatCardNumber();
+        String cvc = StringUtils.generateRandomNumeric(3);
+        LocalDate dateIssued = LocalDate.now(ZoneId.of("UTC"));
+        LocalDate expirationDate = dateIssued.plusYears(4);
+        String cardholder = firstName + " " + lastName;
+
+        return AccountCard.builder().cardNumber(cardNumber)
+                .cvc(cvc).isActive(true).dateIssued(dateIssued)
+                .expirationDate(expirationDate).account(account)
+                .cardholderName(cardholder.toUpperCase()).build();
     }
 
 }

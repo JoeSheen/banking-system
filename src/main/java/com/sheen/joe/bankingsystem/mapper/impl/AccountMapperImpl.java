@@ -1,9 +1,11 @@
 package com.sheen.joe.bankingsystem.mapper.impl;
 
+import com.sheen.joe.bankingsystem.dto.AccountCardSummaryDto;
 import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
 import com.sheen.joe.bankingsystem.dto.TransferSummaryDto;
 import com.sheen.joe.bankingsystem.entity.Account;
+import com.sheen.joe.bankingsystem.entity.AccountCard;
 import com.sheen.joe.bankingsystem.entity.Transfer;
 import com.sheen.joe.bankingsystem.mapper.AccountMapper;
 import org.springframework.stereotype.Component;
@@ -26,7 +28,7 @@ public class AccountMapperImpl implements AccountMapper {
     @Override
     public AccountResponseDto toAccountResponse(Account account) {
         return new AccountResponseDto(account.getId(), account.getAccountName(),
-                account.getAccountNumber(), account.getCardNumber(), account.getCvc(),
+                account.getAccountNumber(), toAccountCardSummary(account.getAccountCard()),
                 account.getBalance(), toTransferSummaries(account.getTransfers()),
                 account.getCreatedAt(), account.getUpdatedAt());
     }
@@ -39,5 +41,9 @@ public class AccountMapperImpl implements AccountMapper {
                         Comparator.reverseOrder())).collect(Collectors.toList());
         }
         return Collections.emptyList();
+    }
+
+    private AccountCardSummaryDto toAccountCardSummary(AccountCard card) {
+        return new AccountCardSummaryDto(card.getId(), card.getCardNumber());
     }
 }

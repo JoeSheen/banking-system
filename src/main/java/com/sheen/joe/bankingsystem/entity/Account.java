@@ -30,9 +30,9 @@ public class Account {
 
     private String accountNumber;
 
-    private String cardNumber;
-
-    private String cvc;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "accountCard")
+    private AccountCard accountCard;
 
     @Column(nullable = false, columnDefinition = "numeric(38,2)")
     private BigDecimal balance;

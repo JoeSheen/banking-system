@@ -1,12 +1,10 @@
 package com.sheen.joe.bankingsystem.service;
 
+import com.sheen.joe.bankingsystem.dto.AccountCardSummaryDto;
 import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
 import com.sheen.joe.bankingsystem.dto.TransferSummaryDto;
-import com.sheen.joe.bankingsystem.entity.Account;
-import com.sheen.joe.bankingsystem.entity.Transfer;
-import com.sheen.joe.bankingsystem.entity.User;
-import com.sheen.joe.bankingsystem.entity.UserRole;
+import com.sheen.joe.bankingsystem.entity.*;
 import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.AccountMapper;
@@ -258,8 +256,8 @@ class AccountServiceTest {
         assertEquals(UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5"), accountResponseDto.id());
         assertEquals(expectedAccountName, accountResponseDto.accountName());
         assertEquals("12345678", accountResponseDto.accountNumber());
-        assertEquals("1234 5678 1234 5678", accountResponseDto.cardNumber());
-        assertEquals("123", accountResponseDto.cvc());
+        assertEquals(new AccountCardSummaryDto(UUID.fromString("d1617663-c559-4a84-84c3-af20ca6ffb79"),
+                "1234 5678 1234 5678"), accountResponseDto.card());
         assertEquals(BigDecimal.TEN, accountResponseDto.balance());
         assertEquals(List.of(expectedTransferSummaryDto()), accountResponseDto.transfers());
         assertEquals(LocalDateTime.of(2023, 4, 6, 12, 30, 0), accountResponseDto.createdAt());
@@ -285,8 +283,8 @@ class AccountServiceTest {
         LocalDateTime updatedAt = LocalDateTime.of(2024, 5, 11, 18, 45, 0);
         User user = buildUserForTest();
 
-        return Account.builder().id(id).accountName(accountName).accountNumber("12345678").
-                cardNumber("1234 5678 1234 5678").cvc("123").balance(BigDecimal.TEN).createdAt(createdAt)
+        return Account.builder().id(id).accountName(accountName).accountNumber("12345678")
+                .accountCard(buildAccountCard()).balance(BigDecimal.TEN).createdAt(createdAt)
                 .updatedAt(updatedAt).user(user).transfers(List.of(buildTransferForTest())).build();
     }
 
@@ -301,6 +299,11 @@ class AccountServiceTest {
         UUID id = UUID.fromString("c8725324-9bb9-4b8a-9059-abbfa953c53e");
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.APRIL, 1, 16, 1, 30);
         return new TransferSummaryDto(id, BigDecimal.ONE, timestamp);
+    }
+
+    private AccountCard buildAccountCard() {
+        UUID id = UUID.fromString("d1617663-c559-4a84-84c3-af20ca6ffb79");
+        return AccountCard.builder().id(id).cardNumber("1234 5678 1234 5678").build();
     }
 
 }
