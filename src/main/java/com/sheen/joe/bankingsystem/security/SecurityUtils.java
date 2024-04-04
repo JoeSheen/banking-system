@@ -6,7 +6,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.UUID;
 
-public class SecurityUtils {
+public final class SecurityUtils {
+
+    private SecurityUtils() {}
 
     public static UUID getUserIdFromSecurityContext() {
         SecurityContext securityContext = SecurityContextHolder.getContext();

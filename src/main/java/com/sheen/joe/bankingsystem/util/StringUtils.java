@@ -3,7 +3,7 @@ package com.sheen.joe.bankingsystem.util;
 import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import org.apache.commons.lang3.RandomStringUtils;
 
-public class StringUtils {
+public final class StringUtils {
 
     private StringUtils() {}
 

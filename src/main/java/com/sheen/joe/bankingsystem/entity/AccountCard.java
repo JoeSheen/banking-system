@@ -1,9 +1,6 @@
 package com.sheen.joe.bankingsystem.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -36,5 +33,6 @@ public class AccountCard {
     private String cardholderName;
 
     @OneToOne(mappedBy = "accountCard")
+    @JoinColumn(name = "account_id")
     private Account account;
 }

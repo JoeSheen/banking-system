@@ -30,8 +30,7 @@ public class Account {
 
     private String accountNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "accountCard")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private AccountCard accountCard;
 
     @Column(nullable = false, columnDefinition = "numeric(38,2)")
