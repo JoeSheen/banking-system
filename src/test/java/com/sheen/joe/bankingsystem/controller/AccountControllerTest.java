@@ -132,6 +132,18 @@ class AccountControllerTest {
         assertEquals("Account balance must be 0.00", closedResponseEntity.getBody());
     }
 
+    @Test
+    void testNewCardForAccount() {
+        when(accountService.requestNewCardForAccount(any(UUID.class)))
+                .thenReturn(buildAccountResponseDtoForTest("Account Name"));
+
+        UUID id = UUID.fromString("7a46dedc-491e-4567-9024-499c62ba5f12");
+        ResponseEntity<AccountResponseDto> accountResponseEntity = accountController.newCardForAccount(id);
+
+        assertResponseEntity(accountResponseEntity, HttpStatus.OK);
+        assertAccountResponseDto(accountResponseEntity.getBody(), "Account Name");
+    }
+
     private void assertResponseEntity(ResponseEntity<AccountResponseDto> responseEntity, HttpStatus status) {
         assertNotNull(responseEntity);
         assertEquals(responseEntity.getStatusCode(), status);

@@ -69,4 +69,10 @@ public class AccountController {
         return new ResponseEntity<>(message, status);
     }
 
+    @PutMapping(path = "/{accountId}/update-card", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AccountResponseDto> newCardForAccount(@PathVariable("accountId") UUID id) {
+        AccountResponseDto accountResponseDto = accountService.requestNewCardForAccount(id);
+        log.info("New card added to account: {}", accountResponseDto.id());
+        return new ResponseEntity<>(accountResponseDto, HttpStatus.OK);
+    }
 }

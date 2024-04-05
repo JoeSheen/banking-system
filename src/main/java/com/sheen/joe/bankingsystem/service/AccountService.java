@@ -19,4 +19,6 @@ public interface AccountService {
 
     Pair<Boolean, String> closeAccount(UUID id);
 
+    AccountResponseDto requestNewCardForAccount(UUID id);
+
 }

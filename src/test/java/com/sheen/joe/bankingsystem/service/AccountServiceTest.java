@@ -251,6 +251,53 @@ class AccountServiceTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
+    @Test
+    void testRequestNewCardForAccount() {
+        when(accountRepository.findById(any(UUID.class)))
+                .thenReturn(Optional.of(buildAccountForTest("Test Account")));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
+        when(accountRepository.save(any(Account.class))).thenReturn(buildAccountForTest("Updated Test Account"));
+
+        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
+        AccountResponseDto responseDto = accountService.requestNewCardForAccount(id);
+
+        assertAccountResponseDto(responseDto, "Updated Test Account");
+    }
+
+    @Test
+    void testRequestNewCardForAccountThrowsResourceNotFoundException() {
+        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
+                accountService.requestNewCardForAccount(id));
+
+        String expectedMessage = "Account with ID: " + id + " not found";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+
+    }
+
+    @Test
+    void testRequestNewCardForAccountThrowsInvalidRequestException() {
+        UUID sUserId = UUID.fromString("76ef7c14-d1ce-48ed-bf8f-fe131b01cde4");
+        SecurityUser securityUser = new SecurityUser(sUserId, Set.of(UserRole.USER_ROLE),
+                "password", "KellyHall1hP2zx");
+
+        when(accountRepository.findById(any(UUID.class)))
+                .thenReturn(Optional.of(buildAccountForTest("Test Account")));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(securityUser);
+
+        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
+                accountService.requestNewCardForAccount(id));
+
+        String expectedMessage = "Invalid account request";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
     private void assertAccountResponseDto(AccountResponseDto accountResponseDto, String expectedAccountName) {
         assertNotNull(accountResponseDto);
         assertEquals(UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5"), accountResponseDto.id());

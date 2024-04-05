@@ -14,7 +14,6 @@ import com.sheen.joe.bankingsystem.security.SecurityUtils;
 import com.sheen.joe.bankingsystem.service.AccountService;
 import com.sheen.joe.bankingsystem.util.StringUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +27,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -93,6 +91,19 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(account);
         String message = String.format("Account with ID: %s successfully closed", id);
         return Pair.of(true, message);
+    }
+
+    @Override
+    public AccountResponseDto requestNewCardForAccount(UUID id) {
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format("Account with ID: %s not found", id)));
+        if (isNotUserAccount(account.getUser().getId())) {
+            throw new InvalidRequestException(ACCOUNT_EXCEPTION_MSG);
+        }
+        User user = account.getUser();
+        AccountCard newCard = buildAccountCard(account, user.getFirstName(), user.getLastName());
+        account.setAccountCard(newCard);
+        return accountMapper.toAccountResponse(accountRepository.save(account));
     }
 
     private boolean isNotUserAccount(UUID accountUserId) {
