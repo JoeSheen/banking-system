@@ -1,5 +1,9 @@
 package com.sheen.joe.bankingsystem.util;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -41,15 +45,15 @@ public final class StringUtils {
         return sb.toString();
     }
 
-    public static String formatPhoneNumberString(String phoneNumber) {
-        if (isNullOrEmpty(phoneNumber) || !phoneNumber.matches("[0-9]+") || phoneNumber.length() != 11) {
-            throw new InvalidRequestException("Phone number contains an invalid character(s)");
+    public static String formatPhoneNumberString(String phoneNumberStr) {
+        String countryCode = "GB";
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+        try {
+            PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneNumberStr, countryCode);
+            return phoneNumberUtil.format(phoneNumber, PhoneNumberFormat.INTERNATIONAL);
+        } catch (NumberParseException e) {
+            throw new InvalidRequestException(e.getMessage());
         }
-        String start = phoneNumber.substring(0, 5);
-        if (start.charAt(0) == '0') {
-            start = "+44 " + start.substring(1);
-        }
-        return start + " " + phoneNumber.substring(5);
     }
 
 }

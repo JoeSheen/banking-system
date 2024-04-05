@@ -74,7 +74,7 @@ class StringUtilsTest {
                 StringUtils.formatPhoneNumberString(null));
 
         String actualMessage = exception.getMessage();
-        String expectedMessage = "Phone number contains an invalid character(s)";
+        String expectedMessage = "The phone number supplied was null";
 
         assertTrue(actualMessage.contains(expectedMessage));
     }
