@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
+import org.javers.core.metamodel.annotation.ShallowReference;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,6 +39,7 @@ public class Transfer {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
+    @ShallowReference
     private Account account;
 
     @CreationTimestamp

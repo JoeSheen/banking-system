@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
+import org.javers.core.metamodel.annotation.ShallowReference;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ public class Account {
 
     private String accountNumber;
 
+    @ShallowReference
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private AccountCard accountCard;
 
@@ -38,10 +40,12 @@ public class Account {
 
     private boolean closed;
 
+    @ShallowReference
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ShallowReference
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transfer> transfers;
 

@@ -3,6 +3,7 @@ package com.sheen.joe.bankingsystem.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.javers.core.metamodel.annotation.ShallowReference;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -32,6 +33,7 @@ public class AccountCard {
 
     private String cardholderName;
 
+    @ShallowReference
     @OneToOne(mappedBy = "accountCard")
     @JoinColumn(name = "account_id")
     private Account account;

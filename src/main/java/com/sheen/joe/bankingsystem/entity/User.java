@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.javers.core.metamodel.annotation.DiffIgnore;
+import org.javers.core.metamodel.annotation.ShallowReference;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -49,10 +51,13 @@ public class User {
     private String username;
 
     @NotBlank
+    @DiffIgnore
     private String password;
 
+    @DiffIgnore
     private Set<UserRole> authorities;
 
+    @ShallowReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Account> accounts;
 
