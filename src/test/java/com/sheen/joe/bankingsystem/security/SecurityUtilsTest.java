@@ -43,4 +43,12 @@ class SecurityUtilsTest {
         UUID id = SecurityUtils.getUserIdFromSecurityContext();
         assertEquals(UUID.fromString("b6934164-f725-4c56-a570-eef3119517fa"), id);
     }
+
+    @Test
+    void testGetUsernameFromSecurityContext() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+
+        assertEquals("WillHawks7Ft4q4", SecurityUtils.getUsernameFromSecurityContext());
+    }
 }

@@ -57,6 +57,12 @@
 			<artifactId>libphonenumber</artifactId>
 			<version>8.13.34</version>
 		</dependency>
+		<!-- JAVERS -->
+		<dependency>
+			<groupId>org.javers</groupId>
+			<artifactId>javers-spring-boot-starter-sql</artifactId>
+			<version>7.4.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
