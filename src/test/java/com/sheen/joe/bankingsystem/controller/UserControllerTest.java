@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,6 +36,33 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         userController = new UserController(userService);
+    }
+
+    @Test
+    void testUpdateUsername() {
+        when(userService.generateNewUsername(any(UUID.class))).thenReturn(buildUserResponseForTest());
+
+        ResponseEntity<UserResponseDto> userResponseEntity = userController.updateUsername(id);
+        assertResponseEntity(userResponseEntity);
+        assertUserResponseDto(userResponseEntity.getBody());
+    }
+
+    @Test
+    void testGetAll() {
+        when(userService.getAllUsers()).thenReturn(List.of(buildUserResponseForTest()));
+
+        ResponseEntity<List<UserResponseDto>> usersResponseEntity = userController.getAll();
+        //asserts on response entity
+        assertNotNull(usersResponseEntity);
+        assertEquals(usersResponseEntity.getStatusCode(), HttpStatus.OK);
+        assertTrue(usersResponseEntity.hasBody());
+        // asserts on list
+        List<UserResponseDto> users = usersResponseEntity.getBody();
+        assertNotNull(users);
+        assertFalse(users.isEmpty());
+        assertEquals(1, users.size());
+        // asserts on list content
+        assertUserResponseDto(users.get(0));
     }
 
     @Test

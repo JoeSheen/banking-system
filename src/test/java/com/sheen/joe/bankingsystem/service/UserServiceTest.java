@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -44,19 +45,34 @@ class UserServiceTest {
     }
 
     @Test
+    void testGenerateNewUsername() {
+        when(userRepository.findById(any(UUID.class)))
+                .thenReturn(Optional.of(buildUserForTest("LauraSparrow1wjAtk")));
+        when(userRepository.save(any(User.class))).thenReturn(buildUserForTest("LauraSparrow78hJGd"));
+
+        UserResponseDto responseDto = userService.generateNewUsername(id);
+        assertUserResponseDto(responseDto, "LauraSparrow78hJGd");
+    }
+
+    @Test
+    void testGenerateNewUsernameThrowsResourceNotFoundException() {
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
+                userService.generateNewUsername(id));
+
+        String actualMessage = exception.getMessage();
+        String expectedMessage = "User with ID: " + id + " not found";
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
     void testGetUserById() {
-        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(buildUserForTest()));
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(buildUserForTest("LauraSparrow1wjAtk")));
 
         UserResponseDto responseDto = userService.getUserById(id);
-        assertNotNull(responseDto);
-        assertEquals(UUID.fromString("056b50b2-656a-4adc-bcf5-0903163475a9"), responseDto.id());
-        assertEquals("Laura", responseDto.firstName());
-        assertEquals("Sparrow", responseDto.lastName());
-        assertEquals(LocalDate.of(2000, Month.MARCH, 29), responseDto.dateOfBirth());
-        assertEquals("+44 1234 567890", responseDto.phoneNumber());
-        assertEquals("sparrow.laura@gmail.com", responseDto.email());
-        assertEquals("LauraSparrow1wjAtk", responseDto.username());
-        assertEquals(Set.of(expectedAccountSummaryDto()), responseDto.accounts());
+        assertUserResponseDto(responseDto, "LauraSparrow1wjAtk");
     }
 
     @Test
@@ -72,12 +88,36 @@ class UserServiceTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
-    private User buildUserForTest() {
+    @Test
+    void testGetAllUsers() {
+        when(userRepository.findAll()).thenReturn(List.of(buildUserForTest("LauraSparrow1wjAtk")));
+
+        List<UserResponseDto> userResponseList = userService.getAllUsers();
+        // asserts on list
+        assertFalse(userResponseList.isEmpty());
+        assertEquals(1, userResponseList.size());
+        // asserts on list content
+        assertUserResponseDto(userResponseList.get(0), "LauraSparrow1wjAtk");
+    }
+
+    private User buildUserForTest(String username) {
         LocalDate dateOfBirth = LocalDate.of(2000, Month.MARCH, 29);
         return User.builder().id(id).firstName("Laura").lastName("Sparrow")
                 .dateOfBirth(dateOfBirth).phoneNumber("+44 1234 567890")
-                .email("sparrow.laura@gmail.com").username("LauraSparrow1wjAtk")
+                .email("sparrow.laura@gmail.com").username(username)
                 .accounts(Set.of(buildAccountForTest())).build();
+    }
+
+    private void assertUserResponseDto(UserResponseDto userResponseDto, String expectedUsername) {
+        assertNotNull(userResponseDto);
+        assertEquals(UUID.fromString("056b50b2-656a-4adc-bcf5-0903163475a9"), userResponseDto.id());
+        assertEquals("Laura", userResponseDto.firstName());
+        assertEquals("Sparrow", userResponseDto.lastName());
+        assertEquals(LocalDate.of(2000, Month.MARCH, 29), userResponseDto.dateOfBirth());
+        assertEquals("+44 1234 567890", userResponseDto.phoneNumber());
+        assertEquals("sparrow.laura@gmail.com", userResponseDto.email());
+        assertEquals(expectedUsername, userResponseDto.username());
+        assertEquals(Set.of(expectedAccountSummaryDto()), userResponseDto.accounts());
     }
 
     private Account buildAccountForTest() {
