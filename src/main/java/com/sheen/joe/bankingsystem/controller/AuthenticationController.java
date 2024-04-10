@@ -1,8 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
-import com.sheen.joe.bankingsystem.dto.authentication.AuthenticationResponseDto;
-import com.sheen.joe.bankingsystem.dto.authentication.LoginRequestDto;
-import com.sheen.joe.bankingsystem.dto.authentication.RegisterRequestDto;
+import com.sheen.joe.bankingsystem.dto.authentication.*;
 import com.sheen.joe.bankingsystem.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
