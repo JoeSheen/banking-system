@@ -1,9 +1,9 @@
 package com.sheen.joe.bankingsystem.mapper;
 
-import com.sheen.joe.bankingsystem.dto.AccountCardSummaryDto;
-import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
-import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
-import com.sheen.joe.bankingsystem.dto.TransferSummaryDto;
+import com.sheen.joe.bankingsystem.dto.card.AccountCardSummaryDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
+import com.sheen.joe.bankingsystem.dto.transfer.TransferSummaryDto;
 import com.sheen.joe.bankingsystem.entity.Account;
 import com.sheen.joe.bankingsystem.entity.AccountCard;
 import com.sheen.joe.bankingsystem.entity.Transfer;

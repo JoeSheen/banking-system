@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.mapper.impl;
 
-import com.sheen.joe.bankingsystem.dto.AuditResponseDto;
-import com.sheen.joe.bankingsystem.dto.AuditSummaryDto;
+import com.sheen.joe.bankingsystem.dto.audit.AuditResponseDto;
+import com.sheen.joe.bankingsystem.dto.audit.AuditSummaryDto;
 import com.sheen.joe.bankingsystem.entity.AuditView;
 import com.sheen.joe.bankingsystem.mapper.AuditViewMapper;
 import org.springframework.stereotype.Component;

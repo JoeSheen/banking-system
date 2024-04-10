@@ -1,4 +1,4 @@
-package com.sheen.joe.bankingsystem.dto;
+package com.sheen.joe.bankingsystem.dto.audit;
 
 import java.sql.Timestamp;
 

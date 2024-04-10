@@ -1,9 +1,9 @@
 package com.sheen.joe.bankingsystem.controller;
 
-import com.sheen.joe.bankingsystem.dto.AccountCardSummaryDto;
-import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
-import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
-import com.sheen.joe.bankingsystem.dto.TransferSummaryDto;
+import com.sheen.joe.bankingsystem.dto.card.AccountCardSummaryDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
+import com.sheen.joe.bankingsystem.dto.transfer.TransferSummaryDto;
 import com.sheen.joe.bankingsystem.service.AccountService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;

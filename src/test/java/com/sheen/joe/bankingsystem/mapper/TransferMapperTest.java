@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.mapper;
 
-import com.sheen.joe.bankingsystem.dto.TransferRequestDto;
-import com.sheen.joe.bankingsystem.dto.TransferResponseDto;
+import com.sheen.joe.bankingsystem.dto.transfer.TransferRequestDto;
+import com.sheen.joe.bankingsystem.dto.transfer.TransferResponseDto;
 import com.sheen.joe.bankingsystem.entity.Transfer;
 import com.sheen.joe.bankingsystem.entity.TransferCategory;
 import com.sheen.joe.bankingsystem.entity.TransferType;

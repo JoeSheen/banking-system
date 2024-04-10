@@ -1,4 +1,7 @@
-package com.sheen.joe.bankingsystem.dto;
+package com.sheen.joe.bankingsystem.dto.account;
+
+import com.sheen.joe.bankingsystem.dto.transfer.TransferSummaryDto;
+import com.sheen.joe.bankingsystem.dto.card.AccountCardSummaryDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

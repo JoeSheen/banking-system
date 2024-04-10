@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.service;
 
-import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
-import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 

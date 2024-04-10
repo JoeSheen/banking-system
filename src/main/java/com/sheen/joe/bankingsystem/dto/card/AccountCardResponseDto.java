@@ -1,4 +1,4 @@
-package com.sheen.joe.bankingsystem.dto;
+package com.sheen.joe.bankingsystem.dto.card;
 
 import java.time.LocalDate;
 import java.util.UUID;

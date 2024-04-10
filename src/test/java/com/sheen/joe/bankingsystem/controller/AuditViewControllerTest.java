@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.controller;
 
-import com.sheen.joe.bankingsystem.dto.AuditResponseDto;
-import com.sheen.joe.bankingsystem.dto.AuditSummaryDto;
+import com.sheen.joe.bankingsystem.dto.audit.AuditResponseDto;
+import com.sheen.joe.bankingsystem.dto.audit.AuditSummaryDto;
 import com.sheen.joe.bankingsystem.service.AuditViewService;
 import org.javers.core.metamodel.object.SnapshotType;
 import org.junit.jupiter.api.BeforeEach;

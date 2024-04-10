@@ -1,6 +1,6 @@
 package com.sheen.joe.bankingsystem.service;
 
-import com.sheen.joe.bankingsystem.dto.AccountCardResponseDto;
+import com.sheen.joe.bankingsystem.dto.card.AccountCardResponseDto;
 import com.sheen.joe.bankingsystem.entity.Account;
 import com.sheen.joe.bankingsystem.entity.AccountCard;
 import com.sheen.joe.bankingsystem.entity.User;

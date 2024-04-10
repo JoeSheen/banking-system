@@ -1,8 +1,8 @@
 package com.sheen.joe.bankingsystem.service;
 
-import com.sheen.joe.bankingsystem.dto.AuthenticationResponseDto;
-import com.sheen.joe.bankingsystem.dto.LoginRequestDto;
-import com.sheen.joe.bankingsystem.dto.RegisterRequestDto;
+import com.sheen.joe.bankingsystem.dto.authentication.AuthenticationResponseDto;
+import com.sheen.joe.bankingsystem.dto.authentication.LoginRequestDto;
+import com.sheen.joe.bankingsystem.dto.authentication.RegisterRequestDto;
 
 public interface AuthenticationService {
 

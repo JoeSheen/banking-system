@@ -3,7 +3,7 @@ package com.sheen.joe.bankingsystem.exception.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sheen.joe.bankingsystem.controller.AccountController;
-import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
 import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
-import com.sheen.joe.bankingsystem.dto.AccountCardResponseDto;
+import com.sheen.joe.bankingsystem.dto.card.AccountCardResponseDto;
 import com.sheen.joe.bankingsystem.service.AccountCardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.mapper.impl;
 
-import com.sheen.joe.bankingsystem.dto.TransferRequestDto;
-import com.sheen.joe.bankingsystem.dto.TransferResponseDto;
+import com.sheen.joe.bankingsystem.dto.transfer.TransferRequestDto;
+import com.sheen.joe.bankingsystem.dto.transfer.TransferResponseDto;
 import com.sheen.joe.bankingsystem.entity.Transfer;
 import com.sheen.joe.bankingsystem.mapper.TransferMapper;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.mapper.impl;
 
-import com.sheen.joe.bankingsystem.dto.AccountSummaryDto;
-import com.sheen.joe.bankingsystem.dto.UserResponseDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountSummaryDto;
+import com.sheen.joe.bankingsystem.dto.user.UserResponseDto;
 import com.sheen.joe.bankingsystem.entity.Account;
 import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.mapper.UserMapper;

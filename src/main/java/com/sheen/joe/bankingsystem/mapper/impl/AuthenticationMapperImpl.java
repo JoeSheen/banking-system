@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.mapper.impl;
 
-import com.sheen.joe.bankingsystem.dto.AuthenticationResponseDto;
-import com.sheen.joe.bankingsystem.dto.RegisterRequestDto;
+import com.sheen.joe.bankingsystem.dto.authentication.AuthenticationResponseDto;
+import com.sheen.joe.bankingsystem.dto.authentication.RegisterRequestDto;
 import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.entity.UserRole;
 import com.sheen.joe.bankingsystem.mapper.AuthenticationMapper;

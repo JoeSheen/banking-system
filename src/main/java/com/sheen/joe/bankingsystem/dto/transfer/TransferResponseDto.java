@@ -1,4 +1,4 @@
-package com.sheen.joe.bankingsystem.dto;
+package com.sheen.joe.bankingsystem.dto.transfer;
 
 import com.sheen.joe.bankingsystem.entity.TransferCategory;
 import com.sheen.joe.bankingsystem.entity.TransferType;

@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.controller;
 
-import com.sheen.joe.bankingsystem.dto.AccountSummaryDto;
-import com.sheen.joe.bankingsystem.dto.UserResponseDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountSummaryDto;
+import com.sheen.joe.bankingsystem.dto.user.UserResponseDto;
 import com.sheen.joe.bankingsystem.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

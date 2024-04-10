@@ -1,4 +1,6 @@
-package com.sheen.joe.bankingsystem.dto;
+package com.sheen.joe.bankingsystem.dto.user;
+
+import com.sheen.joe.bankingsystem.dto.account.AccountSummaryDto;
 
 import java.time.LocalDate;
 import java.util.Set;

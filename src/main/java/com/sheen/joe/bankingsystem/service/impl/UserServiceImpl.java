@@ -1,6 +1,6 @@
 package com.sheen.joe.bankingsystem.service.impl;
 
-import com.sheen.joe.bankingsystem.dto.UserResponseDto;
+import com.sheen.joe.bankingsystem.dto.user.UserResponseDto;
 import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.UserMapper;

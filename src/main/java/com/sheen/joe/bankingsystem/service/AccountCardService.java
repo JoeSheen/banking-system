@@ -1,6 +1,6 @@
 package com.sheen.joe.bankingsystem.service;
 
-import com.sheen.joe.bankingsystem.dto.AccountCardResponseDto;
+import com.sheen.joe.bankingsystem.dto.card.AccountCardResponseDto;
 
 import java.util.UUID;
 

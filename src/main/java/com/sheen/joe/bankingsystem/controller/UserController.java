@@ -1,6 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
-import com.sheen.joe.bankingsystem.dto.UserResponseDto;
+import com.sheen.joe.bankingsystem.dto.user.UserResponseDto;
 import com.sheen.joe.bankingsystem.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

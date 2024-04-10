@@ -1,7 +1,7 @@
 package com.sheen.joe.bankingsystem.controller;
 
-import com.sheen.joe.bankingsystem.dto.AccountRequestDto;
-import com.sheen.joe.bankingsystem.dto.AccountResponseDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
+import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
 import com.sheen.joe.bankingsystem.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.sheen.joe.bankingsystem.dto;
+package com.sheen.joe.bankingsystem.dto.account;
 
 import jakarta.validation.constraints.NotBlank;
 
