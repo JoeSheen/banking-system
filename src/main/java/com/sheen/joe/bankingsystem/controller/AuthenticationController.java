@@ -24,14 +24,6 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponseDto> register(@Valid @RequestBody RegisterRequestDto requestDto) {
         AuthenticationResponseDto authenticationResponseDto = authenticationService.registerUser(requestDto);
         log.info("User with ID: {} registered", authenticationResponseDto.id());
-        // String jwt = generateTokenFromUsername(userPrincipal.getUsername());
-        // ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
-        // MultiValueMap<String, String> headers
-        // MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        // headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
-        // return new ResponseEntity<>(authenticationResponseDto, headers, HttpStatus.CREATED);
-        //https://stackoverflow.com/questions/76314410/spring-boot-creates-new-jsessionid-on-each-request
-        //https://www.bezkoder.com/spring-boot-login-example-mysql/
         return new ResponseEntity<>(authenticationResponseDto, HttpStatus.CREATED);
     }
 
