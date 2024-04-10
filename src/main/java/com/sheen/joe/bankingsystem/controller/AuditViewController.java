@@ -20,8 +20,8 @@ public class AuditViewController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AuditSummaryDto>> getAll(@RequestParam String entityId,
-                                                        @RequestParam(defaultValue = "0") Integer pageNumber, @RequestParam(defaultValue = "50") Integer pageSize,
-                                                        @RequestParam(defaultValue = "commitDate") String sortProperty) {
+            @RequestParam(defaultValue = "0") Integer pageNumber, @RequestParam(defaultValue = "50") Integer pageSize,
+            @RequestParam(defaultValue = "commitDate") String sortProperty) {
         Page<AuditSummaryDto> auditSummaryPage = auditViewService
                 .getAllForEntityId(pageNumber, pageSize, entityId, sortProperty);
         log.info("Page {} contains {} audit record(s)", auditSummaryPage.getNumber(), auditSummaryPage.getNumberOfElements());

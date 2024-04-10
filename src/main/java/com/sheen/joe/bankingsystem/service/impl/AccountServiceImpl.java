@@ -5,7 +5,6 @@ import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
 import com.sheen.joe.bankingsystem.entity.Account;
 import com.sheen.joe.bankingsystem.entity.AccountCard;
 import com.sheen.joe.bankingsystem.entity.User;
-import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.AccountMapper;
 import com.sheen.joe.bankingsystem.repository.AccountRepository;
@@ -37,24 +36,22 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountMapper accountMapper;
 
-    private static final String ACCOUNT_EXCEPTION_MSG = "Invalid account request";
+    private static final String ACCOUNT_EXCEPTION_MSG = "Account with ID: %s not found";
 
     @Override
     public AccountResponseDto createAccount(AccountRequestDto accountRequestDto) {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new ResourceNotFoundException(String.format("User with ID: %s not found", userId)));
+                new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, userId)));
         Account account = buildAccountForUser(accountRequestDto, user);
         return accountMapper.toAccountResponse(accountRepository.save(account));
     }
 
     @Override
     public AccountResponseDto updateAccount(UUID id, AccountRequestDto accountRequestDto) {
-        Account account = accountRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(String.format("Account with ID: %s not found", id)));
-        if (isNotUserAccount(account.getUser().getId())) {
-            throw new InvalidRequestException(ACCOUNT_EXCEPTION_MSG);
-        }
+        UUID userId = SecurityUtils.getUserIdFromSecurityContext();
+        Account account = accountRepository.findAccountByIdAndUserId(id, userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, id)));
         account.setAccountName(accountRequestDto.accountName());
         return accountMapper.toAccountResponse(accountRepository.save(account));
     }
@@ -69,21 +66,17 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponseDto getAccountById(UUID id) {
-        Account account = accountRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(String.format("Account with ID: %s not found", id)));
-        if (isNotUserAccount(account.getUser().getId())) {
-            throw new InvalidRequestException(ACCOUNT_EXCEPTION_MSG);
-        }
+        UUID userId = SecurityUtils.getUserIdFromSecurityContext();
+        Account account = accountRepository.findAccountByIdAndUserId(id, userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, id)));
         return accountMapper.toAccountResponse(account);
     }
 
     @Override
     public Pair<Boolean, String> closeAccount(UUID id) {
-        Account account = accountRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(String.format("Account with ID: %s not found", id)));
-        if (isNotUserAccount(account.getUser().getId())) {
-            throw new InvalidRequestException(ACCOUNT_EXCEPTION_MSG);
-        }
+        UUID userId = SecurityUtils.getUserIdFromSecurityContext();
+        Account account = accountRepository.findAccountByIdAndUserId(id, userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, id)));
         if (!account.getBalance().equals(BigDecimal.ZERO)) {
             return Pair.of(false, "Account balance must be 0.00");
         }
@@ -95,19 +88,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponseDto requestNewCardForAccount(UUID id) {
-        Account account = accountRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(String.format("Account with ID: %s not found", id)));
-        if (isNotUserAccount(account.getUser().getId())) {
-            throw new InvalidRequestException(ACCOUNT_EXCEPTION_MSG);
-        }
+        UUID userId = SecurityUtils.getUserIdFromSecurityContext();
+        Account account = accountRepository.findAccountByIdAndUserId(id, userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, id)));
         User user = account.getUser();
         AccountCard newCard = buildAccountCard(account, user.getFirstName(), user.getLastName());
         account.setAccountCard(newCard);
         return accountMapper.toAccountResponse(accountRepository.save(account));
-    }
-
-    private boolean isNotUserAccount(UUID accountUserId) {
-        return !accountUserId.equals(SecurityUtils.getUserIdFromSecurityContext());
     }
 
     private Account buildAccountForUser(AccountRequestDto accountRequestDto, User user) {

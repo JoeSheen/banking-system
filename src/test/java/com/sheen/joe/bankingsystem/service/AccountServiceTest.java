@@ -5,7 +5,6 @@ import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferSummaryDto;
 import com.sheen.joe.bankingsystem.entity.*;
-import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.AccountMapper;
 import com.sheen.joe.bankingsystem.mapper.impl.AccountMapperImpl;
@@ -79,7 +78,7 @@ class AccountServiceTest {
 
     @Test
     void testUpdateAccount() {
-        when(accountRepository.findById(any(UUID.class)))
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -94,6 +93,11 @@ class AccountServiceTest {
 
     @Test
     void testUpdateAccountThrowsResourceNotFoundException() {
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+                .thenReturn(Optional.empty());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
+
         UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
         AccountRequestDto accountRequestDto = new AccountRequestDto("Updated Test Account");
 
@@ -103,29 +107,6 @@ class AccountServiceTest {
         String expectedMessage = "Account with ID: " + id + " not found";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    void testUpdateAccountThrowsInvalidRequestException() {
-        UUID sUserId = UUID.fromString("76ef7c14-d1ce-48ed-bf8f-fe131b01cde4");
-        SecurityUser securityUser = new SecurityUser(sUserId, Set.of(UserRole.USER_ROLE),
-                "password", "KellyHall1hP2zx");
-
-        when(accountRepository.findById(any(UUID.class)))
-                .thenReturn(Optional.of(buildAccountForTest("Test Account")));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(securityUser);
-
-        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
-        AccountRequestDto accountRequestDto = new AccountRequestDto("Updated Test Account");
-
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-                accountService.updateAccount(id, accountRequestDto));
-
-        String expectedMessage = "Invalid account request";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-
     }
 
     @Test
@@ -145,7 +126,7 @@ class AccountServiceTest {
 
     @Test
     void testGetAccountById() {
-        when(accountRepository.findById(any(UUID.class)))
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -158,6 +139,11 @@ class AccountServiceTest {
 
     @Test
     void testGetAccountByIdThrowsResourceNotFoundException() {
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+                .thenReturn(Optional.empty());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
+
         UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
                 accountService.getAccountById(id));
@@ -168,31 +154,11 @@ class AccountServiceTest {
     }
 
     @Test
-    void testGetAccountByIdThrowsInvalidRequestException() {
-        UUID sUserId = UUID.fromString("76ef7c14-d1ce-48ed-bf8f-fe131b01cde4");
-        SecurityUser securityUser = new SecurityUser(sUserId, Set.of(UserRole.USER_ROLE),
-                "password", "KellyHall1hP2zx");
-
-        when(accountRepository.findById(any(UUID.class)))
-                .thenReturn(Optional.of(buildAccountForTest("Test Account")));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(securityUser);
-
-        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-                accountService.getAccountById(id));
-
-        String expectedMessage = "Invalid account request";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
     void testCloseAccount() {
         Account account = buildAccountForTest("Test Account");
         account.setBalance(BigDecimal.ZERO);
 
-        when(accountRepository.findById(any(UUID.class)))
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(account));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -208,7 +174,7 @@ class AccountServiceTest {
 
     @Test
     void testCloseAccountWithNoneZeroBalance() {
-        when(accountRepository.findById(any(UUID.class)))
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -222,6 +188,11 @@ class AccountServiceTest {
 
     @Test
     void testCloseAccountThrowsResourceNotFoundException() {
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+                .thenReturn(Optional.empty());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
+
         UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
                 accountService.closeAccount(id));
@@ -232,28 +203,8 @@ class AccountServiceTest {
     }
 
     @Test
-    void testCloseAccountThrowsInvalidRequestException() {
-        UUID sUserId = UUID.fromString("76ef7c14-d1ce-48ed-bf8f-fe131b01cde4");
-        SecurityUser securityUser = new SecurityUser(sUserId, Set.of(UserRole.USER_ROLE),
-                "password", "KellyHall1hP2zx");
-
-        when(accountRepository.findById(any(UUID.class)))
-                .thenReturn(Optional.of(buildAccountForTest("Test Account")));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(securityUser);
-
-        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-                accountService.closeAccount(id));
-
-        String expectedMessage = "Invalid account request";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
     void testRequestNewCardForAccount() {
-        when(accountRepository.findById(any(UUID.class)))
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -267,8 +218,12 @@ class AccountServiceTest {
 
     @Test
     void testRequestNewCardForAccountThrowsResourceNotFoundException() {
-        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
+        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+                .thenReturn(Optional.empty());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
 
+        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
                 accountService.requestNewCardForAccount(id));
 
@@ -276,26 +231,6 @@ class AccountServiceTest {
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
 
-    }
-
-    @Test
-    void testRequestNewCardForAccountThrowsInvalidRequestException() {
-        UUID sUserId = UUID.fromString("76ef7c14-d1ce-48ed-bf8f-fe131b01cde4");
-        SecurityUser securityUser = new SecurityUser(sUserId, Set.of(UserRole.USER_ROLE),
-                "password", "KellyHall1hP2zx");
-
-        when(accountRepository.findById(any(UUID.class)))
-                .thenReturn(Optional.of(buildAccountForTest("Test Account")));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(securityUser);
-
-        UUID id = UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5");
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-                accountService.requestNewCardForAccount(id));
-
-        String expectedMessage = "Invalid account request";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     private void assertAccountResponseDto(AccountResponseDto accountResponseDto, String expectedAccountName) {
@@ -352,5 +287,4 @@ class AccountServiceTest {
         UUID id = UUID.fromString("d1617663-c559-4a84-84c3-af20ca6ffb79");
         return AccountCard.builder().id(id).cardNumber("1234 5678 1234 5678").build();
     }
-
 }
