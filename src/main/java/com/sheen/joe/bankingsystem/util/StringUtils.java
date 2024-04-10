@@ -45,8 +45,7 @@ public final class StringUtils {
         return sb.toString();
     }
 
-    public static String formatPhoneNumberString(String phoneNumberStr) {
-        String countryCode = "GB";
+    public static String formatPhoneNumberString(String phoneNumberStr, String countryCode) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
             PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneNumberStr, countryCode);

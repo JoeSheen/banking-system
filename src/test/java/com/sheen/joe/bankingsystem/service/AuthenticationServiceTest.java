@@ -3,6 +3,7 @@ package com.sheen.joe.bankingsystem.service;
 import com.sheen.joe.bankingsystem.dto.authentication.AuthenticationResponseDto;
 import com.sheen.joe.bankingsystem.dto.authentication.LoginRequestDto;
 import com.sheen.joe.bankingsystem.dto.authentication.RegisterRequestDto;
+import com.sheen.joe.bankingsystem.entity.Country;
 import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.entity.UserRole;
 import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
@@ -59,7 +60,7 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         requestDto = new RegisterRequestDto("Elizabeth", "Fleming",
-                LocalDate.of(1984, Month.JANUARY, 25), "01234567890",
+                LocalDate.of(1984, Month.JANUARY, 25), Country.UK, "01234567890",
                 "elizabeth.fleming@hotmail.com", "password");
 
         AuthenticationMapper mapper = new AuthenticationMapperImpl(passwordEncoder);

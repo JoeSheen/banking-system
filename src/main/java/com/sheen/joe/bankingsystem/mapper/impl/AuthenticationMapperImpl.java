@@ -2,6 +2,7 @@ package com.sheen.joe.bankingsystem.mapper.impl;
 
 import com.sheen.joe.bankingsystem.dto.authentication.AuthenticationResponseDto;
 import com.sheen.joe.bankingsystem.dto.authentication.RegisterRequestDto;
+import com.sheen.joe.bankingsystem.entity.Country;
 import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.entity.UserRole;
 import com.sheen.joe.bankingsystem.mapper.AuthenticationMapper;
@@ -23,11 +24,12 @@ public class AuthenticationMapperImpl implements AuthenticationMapper {
         String firstName = registerRequestDto.firstName();
         String lastName = registerRequestDto.lastName();
         String username = firstName + lastName + StringUtils.generateRandomAlphanumeric(6, true);
-        String phoneNumber = StringUtils.formatPhoneNumberString(registerRequestDto.phoneNumber());
+        Country country = registerRequestDto.country();
+        String phoneNumber = StringUtils.formatPhoneNumberString(registerRequestDto.phoneNumber(), country.getCountryCode());
 
         return User.builder().firstName(firstName).lastName(lastName)
-                .dateOfBirth(registerRequestDto.dateOfBirth()).phoneNumber(phoneNumber)
-                .email(registerRequestDto.email()).username(username)
+                .dateOfBirth(registerRequestDto.dateOfBirth()).countryOfResidence(country)
+                .phoneNumber(phoneNumber).email(registerRequestDto.email()).username(username)
                 .password(passwordEncoder.encode(registerRequestDto.password()))
                 .authorities(Set.of(UserRole.USER_ROLE)).build();
     }

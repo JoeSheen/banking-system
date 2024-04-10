@@ -3,6 +3,7 @@ package com.sheen.joe.bankingsystem.controller;
 import com.sheen.joe.bankingsystem.dto.authentication.AuthenticationResponseDto;
 import com.sheen.joe.bankingsystem.dto.authentication.LoginRequestDto;
 import com.sheen.joe.bankingsystem.dto.authentication.RegisterRequestDto;
+import com.sheen.joe.bankingsystem.entity.Country;
 import com.sheen.joe.bankingsystem.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class AuthenticationControllerTest {
                 .thenReturn(authenticationResponseDto);
 
         RegisterRequestDto requestDto = new RegisterRequestDto("Michael", "Wood",
-                LocalDate.of(2003, Month.FEBRUARY, 5), "01234567890",
+                LocalDate.of(2003, Month.FEBRUARY, 5), Country.UK, "01234567890",
                 "wood.michael@outlook.com", "password");
 
         ResponseEntity<AuthenticationResponseDto> authenticationResponseEntity =

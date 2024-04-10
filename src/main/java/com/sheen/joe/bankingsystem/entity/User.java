@@ -38,6 +38,9 @@ public class User {
     @Column(updatable = false)
     private LocalDate dateOfBirth;
 
+    @Enumerated(EnumType.ORDINAL)
+    private Country countryOfResidence;
+
     @NotNull
     @Column(unique = true)
     private String phoneNumber;

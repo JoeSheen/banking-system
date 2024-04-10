@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.util;
 
+import com.sheen.joe.bankingsystem.entity.Country;
 import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import org.junit.jupiter.api.Test;
 
@@ -64,14 +65,14 @@ class StringUtilsTest {
 
     @Test
     void testFormatPhoneNumberString() {
-        String result = StringUtils.formatPhoneNumberString("01234567890");
+        String result = StringUtils.formatPhoneNumberString("01234567890", Country.UK.getCountryCode());
         assertEquals("+44 1234 567890", result);
     }
 
     @Test
     void testFormatPhoneNumberStringThrowsException() {
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-                StringUtils.formatPhoneNumberString(null));
+                StringUtils.formatPhoneNumberString(null, Country.UK.getCountryCode()));
 
         String actualMessage = exception.getMessage();
         String expectedMessage = "The phone number supplied was null";

@@ -2,6 +2,7 @@ package com.sheen.joe.bankingsystem.mapper;
 
 import com.sheen.joe.bankingsystem.dto.authentication.AuthenticationResponseDto;
 import com.sheen.joe.bankingsystem.dto.authentication.RegisterRequestDto;
+import com.sheen.joe.bankingsystem.entity.Country;
 import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.entity.UserRole;
 import com.sheen.joe.bankingsystem.mapper.impl.AuthenticationMapperImpl;
@@ -35,7 +36,7 @@ class AuthenticationMapperTest {
     @BeforeEach
     void setUp() {
         requestDto = new RegisterRequestDto("Chloe", "Williams",
-                LocalDate.of(1986, Month.DECEMBER, 8), "01234567890",
+                LocalDate.of(1986, Month.DECEMBER, 8), Country.UK, "01234567890",
                 "chloe.williams@hotmail.com","password");
 
         user = buildUserForTest();
