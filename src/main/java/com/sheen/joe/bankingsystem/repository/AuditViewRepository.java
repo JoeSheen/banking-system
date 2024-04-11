@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface AuditViewRepository extends PagingAndSortingRepository<AuditView, Long> {
 
-    Optional<AuditView> findByCommitId(Long commitId);
+    Optional<AuditView> findByCommitIdAndAuthor(Long commitId, String author);
 
     Page<AuditView> findAllByEntityIdAndAuthor(String entityId, String author, Pageable pageable);
 

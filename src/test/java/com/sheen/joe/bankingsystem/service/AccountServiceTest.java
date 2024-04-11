@@ -78,7 +78,7 @@ class AccountServiceTest {
 
     @Test
     void testUpdateAccount() {
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -93,7 +93,7 @@ class AccountServiceTest {
 
     @Test
     void testUpdateAccountThrowsResourceNotFoundException() {
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.empty());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -126,7 +126,7 @@ class AccountServiceTest {
 
     @Test
     void testGetAccountById() {
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -139,7 +139,7 @@ class AccountServiceTest {
 
     @Test
     void testGetAccountByIdThrowsResourceNotFoundException() {
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.empty());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -158,7 +158,7 @@ class AccountServiceTest {
         Account account = buildAccountForTest("Test Account");
         account.setBalance(BigDecimal.ZERO);
 
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(account));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -174,7 +174,7 @@ class AccountServiceTest {
 
     @Test
     void testCloseAccountWithNoneZeroBalance() {
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -188,7 +188,7 @@ class AccountServiceTest {
 
     @Test
     void testCloseAccountThrowsResourceNotFoundException() {
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.empty());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -204,7 +204,7 @@ class AccountServiceTest {
 
     @Test
     void testRequestNewCardForAccount() {
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
@@ -218,7 +218,7 @@ class AccountServiceTest {
 
     @Test
     void testRequestNewCardForAccountThrowsResourceNotFoundException() {
-        when(accountRepository.findAccountByIdAndUserId(any(UUID.class), any(UUID.class)))
+        when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.empty());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());

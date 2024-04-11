@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponseDto updateAccount(UUID id, AccountRequestDto accountRequestDto) {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
-        Account account = accountRepository.findAccountByIdAndUserId(id, userId).orElseThrow(() ->
+        Account account = accountRepository.findByIdAndUserId(id, userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, id)));
         account.setAccountName(accountRequestDto.accountName());
         return accountMapper.toAccountResponse(accountRepository.save(account));
@@ -67,7 +67,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponseDto getAccountById(UUID id) {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
-        Account account = accountRepository.findAccountByIdAndUserId(id, userId).orElseThrow(() ->
+        Account account = accountRepository.findByIdAndUserId(id, userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, id)));
         return accountMapper.toAccountResponse(account);
     }
@@ -75,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Pair<Boolean, String> closeAccount(UUID id) {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
-        Account account = accountRepository.findAccountByIdAndUserId(id, userId).orElseThrow(() ->
+        Account account = accountRepository.findByIdAndUserId(id, userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, id)));
         if (!account.getBalance().equals(BigDecimal.ZERO)) {
             return Pair.of(false, "Account balance must be 0.00");
@@ -89,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponseDto requestNewCardForAccount(UUID id) {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
-        Account account = accountRepository.findAccountByIdAndUserId(id, userId).orElseThrow(() ->
+        Account account = accountRepository.findByIdAndUserId(id, userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, id)));
         User user = account.getUser();
         AccountCard newCard = buildAccountCard(account, user.getFirstName(), user.getLastName());

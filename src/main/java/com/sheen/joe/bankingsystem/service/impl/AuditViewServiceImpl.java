@@ -3,7 +3,6 @@ package com.sheen.joe.bankingsystem.service.impl;
 import com.sheen.joe.bankingsystem.dto.audit.AuditResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.AuditSummaryDto;
 import com.sheen.joe.bankingsystem.entity.AuditView;
-import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.AuditViewMapper;
 import com.sheen.joe.bankingsystem.repository.AuditViewRepository;
@@ -37,11 +36,9 @@ public class AuditViewServiceImpl implements AuditViewService {
 
     @Override
     public AuditResponseDto getByCommitId(Long commitId) {
-        AuditView auditView = auditViewRepository.findByCommitId(commitId).orElseThrow(() ->
-                new ResourceNotFoundException(String.format("Audit record with ID: %s not found", commitId)));
-        if (!auditView.getAuthor().equals(SecurityUtils.getUsernameFromSecurityContext())) {
-            throw new InvalidRequestException("Invalid Request");
-        }
+        String author = SecurityUtils.getUsernameFromSecurityContext();
+        AuditView auditView = auditViewRepository.findByCommitIdAndAuthor(commitId, author).orElseThrow(() ->
+                new ResourceNotFoundException(String.format("Audit record with ID: %s for user not found", commitId)));
         return auditViewMapper.toAuditResponse(auditView);
     }
 

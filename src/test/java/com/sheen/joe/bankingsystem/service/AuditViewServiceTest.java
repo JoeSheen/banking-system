@@ -4,7 +4,6 @@ import com.sheen.joe.bankingsystem.dto.audit.AuditResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.AuditSummaryDto;
 import com.sheen.joe.bankingsystem.entity.AuditView;
 import com.sheen.joe.bankingsystem.entity.UserRole;
-import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.AuditViewMapper;
 import com.sheen.joe.bankingsystem.mapper.impl.AuditViewMapperImpl;
@@ -83,9 +82,9 @@ class AuditViewServiceTest {
 
     @Test
     void testGetByCommitId() {
-        when(auditViewRepository.findByCommitId(any())).thenReturn(Optional.of(buildAuditViewForTest()));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest("DavidGriffin6uodCE"));
+        when(auditViewRepository.findByCommitIdAndAuthor(any(), anyString())).thenReturn(Optional.of(buildAuditViewForTest()));
 
         AuditResponseDto auditResponseDto = auditViewService.getByCommitId(1L);
 
@@ -103,25 +102,14 @@ class AuditViewServiceTest {
 
     @Test
     void testGetByCommitIdThrowsResourceNotFoundException() {
-        when(auditViewRepository.findByCommitId(any())).thenReturn(Optional.empty());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest("JessicaBrown4x9Gqs"));
+        when(auditViewRepository.findByCommitIdAndAuthor(any(), anyString())).thenReturn(Optional.empty());
+
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
                 auditViewService.getByCommitId(1L));
 
-        String expectedMessage = "Audit record with ID: 1 not found";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    void testGetByCommitIdThrowsInvalidRequestException() {
-        when(auditViewRepository.findByCommitId(any())).thenReturn(Optional.of(buildAuditViewForTest()));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest("JessicaBrown4x9Gqs"));
-
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-                auditViewService.getByCommitId(1L));
-
-        String expectedMessage = "Invalid Request";
+        String expectedMessage = "Audit record with ID: 1 for user not found";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }

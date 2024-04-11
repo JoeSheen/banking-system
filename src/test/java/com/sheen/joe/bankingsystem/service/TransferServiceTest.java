@@ -61,7 +61,7 @@ class TransferServiceTest {
 
     @Test
     void testCreateTransfer() {
-        when(accountRepository.findAccountByAccountNumber(anyString())).thenReturn(Optional.of(buildAccountForTest()));
+        when(accountRepository.findByAccountNumber(anyString())).thenReturn(Optional.of(buildAccountForTest()));
         when(transferRepository.save(any(Transfer.class))).thenReturn(buildTransferForTest());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
@@ -75,7 +75,7 @@ class TransferServiceTest {
 
     @Test
     void testCreateTransferThrowsInvalidRequestException() {
-        when(accountRepository.findAccountByAccountNumber(anyString())).thenReturn(Optional.of(buildAccountForTest()));
+        when(accountRepository.findByAccountNumber(anyString())).thenReturn(Optional.of(buildAccountForTest()));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
 

@@ -32,7 +32,7 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public TransferResponseDto createTransfer(@NonNull TransferRequestDto transferRequestDto) {
         String accountNumber = transferRequestDto.accountNumber();
-        Account account = accountRepository.findAccountByAccountNumber(accountNumber).orElseThrow(() ->
+        Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("Unknown Account Number: %s", accountNumber)));
         Transfer transfer = transferMapper.toTransfer(transferRequestDto);
         performTransfer(transfer, account);
