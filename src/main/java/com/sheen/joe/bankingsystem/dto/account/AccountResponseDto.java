@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.dto.account;
 
+import com.sheen.joe.bankingsystem.dto.CollectableDtoI;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferSummaryDto;
 import com.sheen.joe.bankingsystem.dto.card.AccountCardSummaryDto;
 
@@ -17,4 +18,4 @@ public record AccountResponseDto(
         List<TransferSummaryDto> transfers,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
-) {}
+) implements CollectableDtoI {}

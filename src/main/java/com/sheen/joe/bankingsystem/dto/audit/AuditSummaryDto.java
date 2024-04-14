@@ -1,5 +1,7 @@
 package com.sheen.joe.bankingsystem.dto.audit;
 
+import com.sheen.joe.bankingsystem.dto.CollectableDtoI;
+
 import java.sql.Timestamp;
 
 public record AuditSummaryDto(
@@ -7,4 +9,4 @@ public record AuditSummaryDto(
         Timestamp commitDate,
         String entityType,
         String entityId
-) {}
+) implements CollectableDtoI {}

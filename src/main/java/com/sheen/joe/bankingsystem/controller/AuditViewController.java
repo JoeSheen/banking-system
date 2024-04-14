@@ -1,10 +1,10 @@
 package com.sheen.joe.bankingsystem.controller;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.*;
 import com.sheen.joe.bankingsystem.service.AuditViewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +19,13 @@ public class AuditViewController {
     private final AuditViewService auditViewService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<AuditSummaryDto>> getAll(@RequestParam String entityId,
+    public ResponseEntity<CollectionResponseDto<AuditSummaryDto>> getAll(@RequestParam String entityId,
             @RequestParam(defaultValue = "0") Integer pageNumber, @RequestParam(defaultValue = "50") Integer pageSize,
             @RequestParam(defaultValue = "commitDate") String sortProperty) {
-        Page<AuditSummaryDto> auditSummaryPage = auditViewService
+        CollectionResponseDto<AuditSummaryDto> responseDto = auditViewService
                 .getAllForEntityId(pageNumber, pageSize, entityId, sortProperty);
-        log.info("Page {} contains {} audit record(s)", auditSummaryPage.getNumber(), auditSummaryPage.getNumberOfElements());
-        return new ResponseEntity<>(auditSummaryPage, HttpStatus.OK);
+        log.info("Page {} contains {} audit record(s)", responseDto.currentPage(), responseDto.content().size());
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{commitId}", produces = MediaType.APPLICATION_JSON_VALUE)

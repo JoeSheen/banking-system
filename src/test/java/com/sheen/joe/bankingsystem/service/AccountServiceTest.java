@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.service;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.card.AccountCardSummaryDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
@@ -116,12 +117,15 @@ class AccountServiceTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
 
-        Page<AccountResponseDto> responseDtoPage = accountService.getAllUserAccounts(0, 5,
-                false, "updatedAt");
+        CollectionResponseDto<AccountResponseDto> collectionResponseDto = accountService
+                .getAllUserAccounts(0, 5, false, "updatedAt");
 
-        assertEquals(0, accountResponseDtoPage.getNumber());
-        assertEquals(1, accountResponseDtoPage.getNumberOfElements());
-        assertAccountResponseDto(responseDtoPage.getContent().get(0), "Test Account");
+        assertEquals(0, collectionResponseDto.currentPage());
+        assertEquals(1, collectionResponseDto.totalPages());
+        assertEquals(1, collectionResponseDto.totalElements());
+        assertFalse(collectionResponseDto.content().isEmpty());
+        assertEquals(1, collectionResponseDto.content().size());
+        assertAccountResponseDto(collectionResponseDto.content().get(0), "Test Account");
     }
 
     @Test

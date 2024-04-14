@@ -28,7 +28,7 @@ public class Transfer {
     private TransferType transferType;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, columnDefinition = "numeric(12,2)")
     private BigDecimal amount;
 
     private String reference;

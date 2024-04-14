@@ -35,7 +35,7 @@ public class Account {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private AccountCard accountCard;
 
-    @Column(nullable = false, columnDefinition = "numeric(38,2)")
+    @Column(nullable = false, columnDefinition = "numeric(12,2)")
     private BigDecimal balance;
 
     private boolean closed;

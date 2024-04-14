@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.AuditResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.AuditSummaryDto;
 import com.sheen.joe.bankingsystem.service.AuditViewService;
@@ -9,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -40,22 +39,24 @@ class AuditViewControllerTest {
     void testGetAll() {
         List<AuditSummaryDto> content = List.of(buildAuditSummaryDtoForTest());
         when(auditViewService.getAllForEntityId(0, 50, "commitDate", "commitDate"))
-                .thenReturn(new PageImpl<>(content));
+                .thenReturn(new CollectionResponseDto<>(content, 0, 1, 1L, true));
 
-        ResponseEntity<Page<AuditSummaryDto>> auditSummaryPageResponseEntity =
+        ResponseEntity<CollectionResponseDto<AuditSummaryDto>> auditCollectionResponseEntity =
                 auditViewController.getAll("commitDate",0, 50, "commitDate");
 
         // assert response entity
-        assertNotNull(auditSummaryPageResponseEntity);
-        assertEquals(auditSummaryPageResponseEntity.getStatusCode(), HttpStatus.OK);
-        assertTrue(auditSummaryPageResponseEntity.hasBody());
-        // assert page
-        Page<AuditSummaryDto> auditSummaryPage = auditSummaryPageResponseEntity.getBody();
-        assertNotNull(auditSummaryPage);
-        assertEquals(0, auditSummaryPage.getNumber());
-        assertEquals(1, auditSummaryPage.getNumberOfElements());
+        assertNotNull(auditCollectionResponseEntity);
+        assertEquals(auditCollectionResponseEntity.getStatusCode(), HttpStatus.OK);
+        assertTrue(auditCollectionResponseEntity.hasBody());
+        // assert collection
+        CollectionResponseDto<AuditSummaryDto> collection = auditCollectionResponseEntity.getBody();
+        assertNotNull(collection);
+        assertEquals(0, collection.currentPage());
+        assertEquals(1, collection.totalPages());
+        assertEquals(1, collection.totalElements());
+        assertTrue(collection.sorted());
         // assert account response
-        AuditSummaryDto auditSummaryDto = auditSummaryPage.getContent().get(0);
+        AuditSummaryDto auditSummaryDto = collection.content().get(0);
         assertNotNull(auditSummaryDto);
         assertEquals(1L, auditSummaryDto.commitId());
         assertEquals(Timestamp.valueOf(LocalDateTime.of(2024, Month.APRIL,7, 15,6,39)), auditSummaryDto.commitDate());

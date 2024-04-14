@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.service.impl;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.AuditResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.AuditSummaryDto;
 import com.sheen.joe.bankingsystem.entity.AuditView;
@@ -26,12 +27,16 @@ public class AuditViewServiceImpl implements AuditViewService {
     private final AuditViewMapper auditViewMapper;
 
     @Override
-    public Page<AuditSummaryDto> getAllForEntityId(int pageNumber, int pageSize, String entityId, String sortProperty) {
-        String authorUsername = SecurityUtils.getUsernameFromSecurityContext();
+    public CollectionResponseDto<AuditSummaryDto> getAllForEntityId(int pageNumber, int pageSize, String entityId, String sortProperty) {
+        String author = SecurityUtils.getUsernameFromSecurityContext();
         Sort sort = Sort.by(new Order(Direction.ASC, sortProperty));
         Pageable paging = PageRequest.of(pageNumber, pageSize, sort);
-        return auditViewRepository.findAllByEntityIdAndAuthor(entityId, authorUsername, paging)
+
+        Page<AuditSummaryDto> page = auditViewRepository.findAllByEntityIdAndAuthor(entityId, author, paging)
                 .map(auditViewMapper::toAuditSummary);
+
+        return new CollectionResponseDto<>(page.getContent(), page.getNumber(), page.getTotalPages(),
+                page.getTotalElements(), page.getSort().isSorted());
     }
 
     @Override

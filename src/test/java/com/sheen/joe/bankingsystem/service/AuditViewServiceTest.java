@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.service;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.AuditResponseDto;
 import com.sheen.joe.bankingsystem.dto.audit.AuditSummaryDto;
 import com.sheen.joe.bankingsystem.entity.AuditView;
@@ -65,14 +66,16 @@ class AuditViewServiceTest {
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest("DavidGriffin6uodCE"));
 
         String entityId = "5a0346d2-74f9-4ce2-afd6-19ec16d4be67";
-        Page<AuditSummaryDto> responseDtoPage = auditViewService.getAllForEntityId(0, 50, entityId, "commitDate");
+        CollectionResponseDto<AuditSummaryDto> collectionResponseDto = auditViewService
+                .getAllForEntityId(0, 50, entityId, "commitDate");
 
-        // assert page
-        assertEquals(0, responseDtoPage.getNumber());
-        assertEquals(1, responseDtoPage.getNumberOfElements());
-        assertTrue(responseDtoPage.hasContent());
+        // assert collection
+        assertEquals(0, collectionResponseDto.currentPage());
+        assertEquals(1, collectionResponseDto.totalPages());
+        assertEquals(1, collectionResponseDto.totalElements());
+        assertFalse(collectionResponseDto.content().isEmpty());
         // assert content of AuditSummaryDto
-        AuditSummaryDto auditSummaryDto = responseDtoPage.getContent().get(0);
+        AuditSummaryDto auditSummaryDto = collectionResponseDto.content().get(0);
         assertNotNull(auditSummaryDto);
         assertEquals(1L, auditSummaryDto.commitId());
         assertEquals(Timestamp.valueOf(LocalDateTime.of(2024, Month.APRIL, 7, 17, 35, 38)), auditSummaryDto.commitDate());

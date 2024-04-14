@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.card.AccountCardSummaryDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
@@ -11,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -68,21 +67,24 @@ class AccountControllerTest {
     void testGetAll() {
         List<AccountResponseDto> content = List.of(buildAccountResponseDtoForTest("Account Name"));
         when(accountService.getAllUserAccounts(0, 5, false, "updatedAt"))
-                .thenReturn(new PageImpl<>(content));
+                .thenReturn(new CollectionResponseDto<>(content, 0, 1, 1L, true));
 
-        ResponseEntity<Page<AccountResponseDto>> accountPageResponseEntity =
+        ResponseEntity<CollectionResponseDto<AccountResponseDto>> accountCollectionResponseEntity =
                 accountController.getAll(0, 5, false, "updatedAt");
 
         // assert response entity
-        assertNotNull(accountPageResponseEntity);
-        assertEquals(accountPageResponseEntity.getStatusCode(), HttpStatus.OK);
-        assertTrue(accountPageResponseEntity.hasBody());
-        // assert page
-        assertNotNull(accountPageResponseEntity.getBody());
-        assertEquals(0, accountPageResponseEntity.getBody().getNumber());
-        assertEquals(1, accountPageResponseEntity.getBody().getNumberOfElements());
+        assertNotNull(accountCollectionResponseEntity);
+        assertEquals(accountCollectionResponseEntity.getStatusCode(), HttpStatus.OK);
+        assertTrue(accountCollectionResponseEntity.hasBody());
+        // assert collection
+        CollectionResponseDto<AccountResponseDto> collection = accountCollectionResponseEntity.getBody();
+        assertNotNull(collection);
+        assertEquals(0, collection.currentPage());
+        assertEquals(1, collection.totalPages());
+        assertEquals(1, collection.totalElements());
+        assertTrue(collection.sorted());
         // assert account response
-        assertAccountResponseDto(accountPageResponseEntity.getBody().getContent().get(0), "Account Name");
+        assertAccountResponseDto(collection.content().get(0), "Account Name");
     }
 
     @Test

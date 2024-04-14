@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.service.impl;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountRequestDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountResponseDto;
 import com.sheen.joe.bankingsystem.entity.Account;
@@ -57,11 +58,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Page<AccountResponseDto> getAllUserAccounts(int pageNumber, int pageSize, boolean closed, String sortProperty) {
+    public CollectionResponseDto<AccountResponseDto> getAllUserAccounts(int pageNumber, int pageSize,
+            boolean closed, String sortProperty) {
         Sort sort = Sort.by(new Order(Sort.Direction.DESC, sortProperty));
         Pageable paging = PageRequest.of(pageNumber, pageSize, sort);
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
-        return accountRepository.findAllUserAccounts(closed, userId, paging).map(accountMapper::toAccountResponse);
+
+        Page<AccountResponseDto> page = accountRepository.findAllUserAccounts(closed, userId, paging)
+                .map(accountMapper::toAccountResponse);
+
+        return new CollectionResponseDto<>(page.getContent(), page.getNumber(), page.getTotalPages(),
+                page.getTotalElements(), page.getSort().isSorted());
     }
 
     @Override
