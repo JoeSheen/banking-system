@@ -245,6 +245,7 @@ class AccountServiceTest {
         assertEquals(new AccountCardSummaryDto(UUID.fromString("d1617663-c559-4a84-84c3-af20ca6ffb79"),
                 "1234 5678 1234 5678"), accountResponseDto.card());
         assertEquals(BigDecimal.TEN, accountResponseDto.balance());
+        assertEquals("12-34-56", accountResponseDto.sortCode());
         assertEquals(List.of(expectedTransferSummaryDto()), accountResponseDto.transfers());
         assertEquals(LocalDateTime.of(2023, 4, 6, 12, 30, 0), accountResponseDto.createdAt());
         assertEquals(LocalDateTime.of(2024, 5, 11, 18, 45, 0), accountResponseDto.updatedAt());
@@ -270,8 +271,9 @@ class AccountServiceTest {
         User user = buildUserForTest();
 
         return Account.builder().id(id).accountName(accountName).accountNumber("12345678")
-                .accountCard(buildAccountCard()).balance(BigDecimal.TEN).createdAt(createdAt)
-                .updatedAt(updatedAt).user(user).transfers(List.of(buildTransferForTest())).build();
+                .accountCard(buildAccountCard()).balance(BigDecimal.TEN).sortCode("12-34-56")
+                .createdAt(createdAt).updatedAt(updatedAt).user(user)
+                .transfers(List.of(buildTransferForTest())).build();
     }
 
     private Transfer buildTransferForTest() {

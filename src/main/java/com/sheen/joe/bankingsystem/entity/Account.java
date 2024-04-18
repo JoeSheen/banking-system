@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.validator.constraints.Length;
 import org.javers.core.metamodel.annotation.ShallowReference;
 
 import java.math.BigDecimal;
@@ -37,6 +38,10 @@ public class Account {
 
     @Column(nullable = false, columnDefinition = "numeric(12,2)")
     private BigDecimal balance;
+
+    @Length(min = 8, max = 8)
+    @Column(nullable = false, updatable = false)
+    private String sortCode;
 
     private boolean closed;
 

@@ -27,9 +27,11 @@ public class AccountMapperImpl implements AccountMapper {
 
     @Override
     public AccountResponseDto toAccountResponse(Account account) {
+        List<TransferSummaryDto> transferSummaries = toTransferSummaries(account.getTransfers());
+
         return new AccountResponseDto(account.getId(), account.getAccountName(),
                 account.getAccountNumber(), toAccountCardSummary(account.getAccountCard()),
-                account.getBalance(), toTransferSummaries(account.getTransfers()),
+                account.getBalance(), account.getSortCode(), transferSummaries,
                 account.getCreatedAt(), account.getUpdatedAt());
     }
 

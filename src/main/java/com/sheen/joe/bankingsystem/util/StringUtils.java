@@ -45,6 +45,12 @@ public final class StringUtils {
         return sb.toString();
     }
 
+    public static String generateSortCode() {
+        String sortCodeDigits = RandomStringUtils.randomNumeric(6);
+        return sortCodeDigits.substring(0, 2) + "-" + sortCodeDigits.substring(2,4)
+                + "-" + sortCodeDigits.substring(4);
+    }
+
     public static String formatPhoneNumberString(String phoneNumberStr, String countryCode) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {

@@ -160,6 +160,7 @@ class AccountControllerTest {
         assertEquals(new AccountCardSummaryDto(UUID.fromString("b706649c-630e-48f0-b1e3-5cb35caafda5"),
                         "1234 5678 1234 5678"), accountResponseDto.card());
         assertEquals(BigDecimal.TEN, accountResponseDto.balance());
+        assertEquals("12-34-56", accountResponseDto.sortCode());
         assertEquals(List.of(buildTransferSummaryDtoForTest()), accountResponseDto.transfers());
         assertEquals(LocalDateTime.of(2023, 4, 6, 12, 30, 0), accountResponseDto.createdAt());
         assertEquals(LocalDateTime.of(2024, 5, 11, 18, 45, 0), accountResponseDto.updatedAt());
@@ -173,7 +174,7 @@ class AccountControllerTest {
                 "1234 5678 1234 5678");
 
         return new AccountResponseDto(id, accountName, "12345678", card,
-                BigDecimal.TEN, List.of(buildTransferSummaryDtoForTest()), createdAt, updatedAt);
+                BigDecimal.TEN, "12-34-56", List.of(buildTransferSummaryDtoForTest()), createdAt, updatedAt);
     }
 
     private TransferSummaryDto buildTransferSummaryDtoForTest() {

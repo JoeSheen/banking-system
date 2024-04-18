@@ -15,6 +15,7 @@ public record AccountResponseDto(
         String accountNumber,
         AccountCardSummaryDto card,
         BigDecimal balance,
+        String sortCode,
         List<TransferSummaryDto> transfers,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

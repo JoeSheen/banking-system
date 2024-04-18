@@ -107,6 +107,7 @@ public class AccountServiceImpl implements AccountService {
     private Account buildAccountForUser(AccountRequestDto accountRequestDto, User user) {
         Account account = accountMapper.toAccount(accountRequestDto);
         account.setAccountNumber(StringUtils.generateRandomNumeric(8));
+        account.setSortCode(StringUtils.generateSortCode());
         AccountCard card = buildAccountCard(account, user.getFirstName(), user.getLastName());
         account.setAccountCard(card);
         account.setUser(user);

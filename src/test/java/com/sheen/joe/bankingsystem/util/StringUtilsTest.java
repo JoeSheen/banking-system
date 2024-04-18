@@ -64,6 +64,16 @@ class StringUtilsTest {
     }
 
     @Test
+    void testGenerateSortCode() {
+        String result = StringUtils.generateSortCode();
+
+        assertEquals(8, result.length());
+        for (char c : result.toCharArray()) {
+            assertTrue(Character.isDigit(c) || c == '-');
+        }
+    }
+
+    @Test
     void testFormatPhoneNumberString() {
         String result = StringUtils.formatPhoneNumberString("01234567890", Country.UK.getCountryCode());
         assertEquals("+44 1234 567890", result);
