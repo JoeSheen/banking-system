@@ -11,10 +11,9 @@ import com.sheen.joe.bankingsystem.mapper.AccountMapper;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class AccountMapperImpl implements AccountMapper {
@@ -27,7 +26,7 @@ public class AccountMapperImpl implements AccountMapper {
 
     @Override
     public AccountResponseDto toAccountResponse(Account account) {
-        List<TransferSummaryDto> transferSummaries = toTransferSummaries(account.getTransfers());
+        List<TransferSummaryDto> transferSummaries = toTransferSummaries(account.getSentTransfers(), account.getReceivedTransfers());
 
         return new AccountResponseDto(account.getId(), account.getAccountName(),
                 account.getAccountNumber(), toAccountCardSummary(account.getAccountCard()),
@@ -35,14 +34,14 @@ public class AccountMapperImpl implements AccountMapper {
                 account.getCreatedAt(), account.getUpdatedAt());
     }
 
-    private List<TransferSummaryDto> toTransferSummaries(List<Transfer> transfers) {
-        if (transfers != null) {
-            return transfers.stream().map(transfer -> new TransferSummaryDto(transfer.getId(),
-                transfer.getAmount(), transfer.getTimestamp()))
-                .sorted(Comparator.comparing(TransferSummaryDto::timestamp,
-                        Comparator.reverseOrder())).collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+    private List<TransferSummaryDto> toTransferSummaries(List<Transfer> sentTransfers, List<Transfer> receivedTransfers) {
+        Stream<Transfer> sentStream = sentTransfers == null ? Stream.empty() : sentTransfers.stream();
+        Stream<Transfer> receivedStream = receivedTransfers == null ? Stream.empty() : receivedTransfers.stream();
+
+        return Stream.concat(sentStream, receivedStream).map(transfer ->
+                new TransferSummaryDto(transfer.getId(), transfer.getAmount(), transfer.getTimestamp()))
+                .sorted(Comparator.comparing(TransferSummaryDto::timestamp, Comparator.reverseOrder()))
+                .toList();
     }
 
     private AccountCardSummaryDto toAccountCardSummary(AccountCard card) {

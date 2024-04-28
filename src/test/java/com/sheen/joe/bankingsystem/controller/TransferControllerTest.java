@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
+import com.sheen.joe.bankingsystem.dto.transfer.DepositWithdrawTransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferResponseDto;
 import com.sheen.joe.bankingsystem.entity.TransferCategory;
@@ -36,26 +37,59 @@ class TransferControllerTest {
     }
 
     @Test
-    void testCreate() {
-        when(transferService.createTransfer(any(TransferRequestDto.class))).thenReturn(buildTransferResponseForTest());
+    void testPerformDeposit() {
+        when(transferService.createTransfer(any(DepositWithdrawTransferRequestDto.class)))
+                .thenReturn(buildTransferResponseForTest(TransferType.DEPOSIT, "Deposit", TransferCategory.GENERAL, new BigDecimal("15.30")));
 
-        TransferRequestDto requestDto = new TransferRequestDto("12345678", TransferType.DEPOSIT,
-                new BigDecimal("1500.47"), "reference", TransferCategory.TRAVEL);
-        ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.create(requestDto);
+        DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
+                "12-34-56", TransferType.DEPOSIT, new BigDecimal("25.99"));
+        ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.performDeposit(transferRequestDto);
 
         assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
-        assertTransferResponse(transferResponseEntity.getBody());
+        assertTransferResponse(transferResponseEntity.getBody(), TransferType.DEPOSIT, new BigDecimal("15.30"),
+                "Deposit", TransferCategory.GENERAL);
+    }
+
+    @Test
+    void testPerformWithdrawal() {
+        when(transferService.createTransfer(any(DepositWithdrawTransferRequestDto.class)))
+                .thenReturn(buildTransferResponseForTest(TransferType.WITHDRAW, "Withdraw", TransferCategory.GENERAL, new BigDecimal("15.30")));
+
+        DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
+                "12-34-56", TransferType.WITHDRAW, new BigDecimal("15.30"));
+        ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.performWithdrawal(transferRequestDto);
+
+        assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
+        assertTransferResponse(transferResponseEntity.getBody(), TransferType.WITHDRAW, new BigDecimal("15.30"),
+                "Withdraw", TransferCategory.GENERAL);
+    }
+
+    @Test
+    void testPerformTransfer() {
+        when(transferService.createTransfer(any(TransferRequestDto.class)))
+                .thenReturn(buildTransferResponseForTest(TransferType.PERSONAL, "reference", TransferCategory.TRAVEL, new BigDecimal("75.00")));
+
+        TransferRequestDto transferRequestDto = new TransferRequestDto("12345678", "12-34-56",
+                "87654321", "65-43-21", "Jeffrey Oshea",
+                TransferType.PERSONAL, TransferCategory.TRAVEL, "reference", new BigDecimal("75.00"));
+        ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.performTransfer(transferRequestDto);
+
+        assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
+        assertTransferResponse(transferResponseEntity.getBody(), TransferType.PERSONAL, new BigDecimal("75.00"),
+                "reference", TransferCategory.TRAVEL);
     }
 
     @Test
     void testGetById() {
-        when(transferService.getTransferById(any(UUID.class))).thenReturn(buildTransferResponseForTest());
+        when(transferService.getTransferById(any(UUID.class)))
+                .thenReturn(buildTransferResponseForTest(TransferType.DEPOSIT, "Deposit", TransferCategory.GENERAL, new BigDecimal("150.47")));
 
         UUID id = UUID.fromString("ff9efba8-7953-4065-8499-5f86cb3bc226");
         ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.getById(id);
 
         assertResponseEntity(transferResponseEntity, HttpStatus.OK);
-        assertTransferResponse(transferResponseEntity.getBody());
+        assertTransferResponse(transferResponseEntity.getBody(), TransferType.DEPOSIT, new BigDecimal("150.47"),
+                "Deposit", TransferCategory.GENERAL);
     }
 
     private void assertResponseEntity(ResponseEntity<TransferResponseDto> responseEntity, HttpStatus expectedStatus) {
@@ -64,20 +98,20 @@ class TransferControllerTest {
         assertTrue(responseEntity.hasBody());
     }
 
-    private void assertTransferResponse(TransferResponseDto transferResponseDto) {
+    private void assertTransferResponse(TransferResponseDto transferResponseDto, TransferType expectedType,
+            BigDecimal expectedAmount, String expectedReference, TransferCategory expectedCategory) {
         assertNotNull(transferResponseDto);
         assertEquals(UUID.fromString("ff9efba8-7953-4065-8499-5f86cb3bc226"), transferResponseDto.id());
-        assertEquals(TransferType.DEPOSIT, transferResponseDto.type());
-        assertEquals(new BigDecimal("1500.47"), transferResponseDto.amount());
-        assertEquals("reference", transferResponseDto.reference());
-        assertEquals(TransferCategory.TRAVEL, transferResponseDto.category());
+        assertEquals(expectedType, transferResponseDto.type());
+        assertEquals(expectedAmount, transferResponseDto.amount());
+        assertEquals(expectedReference, transferResponseDto.reference());
+        assertEquals(expectedCategory, transferResponseDto.category());
         assertEquals(LocalDateTime.of(2024, Month.MARCH, 29, 20, 11, 3), transferResponseDto.timestamp());
     }
 
-    private TransferResponseDto buildTransferResponseForTest() {
+    private TransferResponseDto buildTransferResponseForTest(TransferType type, String reference, TransferCategory category, BigDecimal amount) {
         UUID id = UUID.fromString("ff9efba8-7953-4065-8499-5f86cb3bc226");
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.MARCH, 29, 20, 11, 3);
-        return new TransferResponseDto(id, TransferType.DEPOSIT, new BigDecimal("1500.47"),
-                "reference", TransferCategory.TRAVEL, timestamp);
+        return new TransferResponseDto(id, type, amount, reference, category, timestamp);
     }
 }

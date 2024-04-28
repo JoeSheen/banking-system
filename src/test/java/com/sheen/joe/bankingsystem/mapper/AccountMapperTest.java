@@ -61,7 +61,7 @@ class AccountMapperTest {
         LocalDateTime updatedAt = LocalDateTime.of(2024, 2, 21, 11, 45, 0);
         return Account.builder().id(id).accountName("Test Account").accountNumber("12345678")
                 .accountCard(buildAccountCard()).balance(BigDecimal.TEN).createdAt(createdAt)
-                .updatedAt(updatedAt).transfers(List.of(buildTransferForTest())).build();
+                .updatedAt(updatedAt).sentTransfers(List.of(buildTransferForTest())).build();
     }
 
     private Transfer buildTransferForTest() {

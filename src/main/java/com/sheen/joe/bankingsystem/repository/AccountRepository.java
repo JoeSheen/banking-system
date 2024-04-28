@@ -19,7 +19,7 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     @Query("SELECT a FROM Account a WHERE a.user.id = :#{#userId} AND a.closed = :#{#closed}")
     Page<Account> findAllUserAccounts(@Param("closed") boolean closed, @Param("userId") UUID userId, Pageable pageable);
 
-    Optional<Account> findByAccountNumber(String accountNumber);
+    Optional<Account> findByAccountNumberAndSortCode(String accountNumber, String sortCode);
 
     Optional<Account> findByIdAndUserId(UUID id, UUID userId);
 

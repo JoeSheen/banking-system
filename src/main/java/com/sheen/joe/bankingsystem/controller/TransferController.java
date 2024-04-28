@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
+import com.sheen.joe.bankingsystem.dto.transfer.DepositWithdrawTransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferResponseDto;
 import com.sheen.joe.bankingsystem.service.TransferService;
@@ -21,10 +22,24 @@ public class TransferController {
 
     private final TransferService transferService;
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransferResponseDto> create(@Valid @RequestBody TransferRequestDto transferRequestDto) {
+    @PostMapping(path = "/deposit", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TransferResponseDto> performDeposit(@Valid @RequestBody DepositWithdrawTransferRequestDto transferRequestDto) {
         TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
-        log.info("Transfer with ID: {} created", transferResponseDto.id());
+        log.info("Deposit with ID: {} created", transferResponseDto.id());
+        return new ResponseEntity<>(transferResponseDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping(path = "/withdraw", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TransferResponseDto> performWithdrawal(@Valid @RequestBody DepositWithdrawTransferRequestDto transferRequestDto) {
+        TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
+        log.info("Withdrawal with ID: {} created", transferResponseDto.id());
+        return new ResponseEntity<>(transferResponseDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TransferResponseDto> performTransfer(@Valid @RequestBody TransferRequestDto transferRequestDto) {
+        TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
+        log.info("Account to Account transfer with ID: {} created", transferResponseDto.id());
         return new ResponseEntity<>(transferResponseDto, HttpStatus.CREATED);
     }
 

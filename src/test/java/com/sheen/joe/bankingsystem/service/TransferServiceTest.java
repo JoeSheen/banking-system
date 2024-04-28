@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.service;
 
+import com.sheen.joe.bankingsystem.dto.transfer.DepositWithdrawTransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferResponseDto;
 import com.sheen.joe.bankingsystem.entity.*;
@@ -60,40 +61,152 @@ class TransferServiceTest {
     }
 
     @Test
-    void testCreateTransfer() {
-        when(accountRepository.findByAccountNumber(anyString())).thenReturn(Optional.of(buildAccountForTest()));
+    void testCreateDepositTransfer() {
+        when(accountRepository.findByAccountNumberAndSortCode(anyString(), anyString()))
+                .thenReturn(Optional.of(buildAccountForTest()));
         when(transferRepository.save(any(Transfer.class))).thenReturn(buildTransferForTest());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
 
-        TransferRequestDto transferRequestDto = new TransferRequestDto("12345678", TransferType.WITHDRAW,
-                BigDecimal.TEN, "reference", TransferCategory.EATING_OUT);
+        DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
+                "12-34-56", TransferType.DEPOSIT, BigDecimal.TEN);
+
         TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
 
         assertTransferResponseDto(transferResponseDto);
     }
 
     @Test
-    void testCreateTransferThrowsInvalidRequestException() {
-        when(accountRepository.findByAccountNumber(anyString())).thenReturn(Optional.of(buildAccountForTest()));
+    void testCreateWithdrawTransfer() {
+        when(accountRepository.findByAccountNumberAndSortCode(anyString(), anyString()))
+                .thenReturn(Optional.of(buildAccountForTest()));
+        when(transferRepository.save(any(Transfer.class))).thenReturn(buildTransferForTest());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
 
-        TransferRequestDto transferRequestDto = new TransferRequestDto("12345678", TransferType.WITHDRAW,
-                new BigDecimal("1000.50"), "reference", TransferCategory.EATING_OUT);
+        DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
+                "12-34-56", TransferType.WITHDRAW, BigDecimal.TEN);
+
+        TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
+
+        assertTransferResponseDto(transferResponseDto);
+    }
+
+    @Test
+    void testCreateTransferThrowsResourceNotFoundException() {
+        when(accountRepository.findByAccountNumberAndSortCode(anyString(), anyString()))
+                .thenReturn(Optional.empty());
+
+        DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
+                "12-34-56", TransferType.DEPOSIT, BigDecimal.TEN);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
+                transferService.createTransfer(transferRequestDto));
+
+        String expectedMessage = "Account not found";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testCreateTransferThrowsInvalidRequestException() {
+        UUID id = UUID.fromString("66445630-04fb-40b8-8bbc-547b0c3cdd80");
+        when(accountRepository.findByAccountNumberAndSortCode(anyString(), anyString()))
+                .thenReturn(Optional.of(buildAccountForTest()));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(id));
+
+        DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
+                "12-34-56", TransferType.WITHDRAW, BigDecimal.TEN);
+
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
                 transferService.createTransfer(transferRequestDto));
 
-        String expectedMessage = "Insufficient funds to perform transfer";
+        String expectedMessage = "Invalid Transfer Request";
         String actualMessage = exception.getMessage();
-
         assertTrue(actualMessage.contains(expectedMessage));
+    }
 
+    @Test
+    void testCreateTransferWithInsufficientFunds() {
+        when(accountRepository.findByAccountNumberAndSortCode(anyString(), anyString()))
+                .thenReturn(Optional.of(buildAccountForTest()));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
+
+        DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
+                "12-34-56", TransferType.WITHDRAW, new BigDecimal("1000.00"));
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
+                transferService.createTransfer(transferRequestDto));
+
+        String expectedMessage = "Account has insufficient funds";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testCreateTransfer() {
+        when(accountRepository.findByAccountNumberAndSortCode(anyString(), anyString()))
+                .thenReturn(Optional.of(buildAccountForTest()));
+        when(transferRepository.save(any(Transfer.class))).thenReturn(buildTransferForTest());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
+
+        TransferRequestDto transferRequestDto = new TransferRequestDto("87654321",
+                "65-43-21", "12345678", "12-34-56",
+                "Maggie Stephens", TransferType.PERSONAL, TransferCategory.ENTERTAINMENT,
+                "reference", BigDecimal.TEN);
+
+        TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
+
+        assertTransferResponseDto(transferResponseDto);
+    }
+
+    @Test
+    void testCreateTransferWithIncorrectTransferType() {
+        when(accountRepository.findByAccountNumberAndSortCode(anyString(), anyString()))
+                .thenReturn(Optional.of(buildAccountForTest()));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
+
+        TransferRequestDto transferRequestDto = new TransferRequestDto("87654321",
+                "65-43-21", "12345678", "12-34-56",
+                "Maggie Stephens", TransferType.DEPOSIT, TransferCategory.ENTERTAINMENT,
+                "reference", BigDecimal.TEN);
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
+                transferService.createTransfer(transferRequestDto));
+
+        String expectedMessage = "Incorrect Transfer Type";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testCreateTransferWithIncorrectReceiverName() {
+        when(accountRepository.findByAccountNumberAndSortCode(anyString(), anyString()))
+                .thenReturn(Optional.of(buildAccountForTest()));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
+
+        TransferRequestDto transferRequestDto = new TransferRequestDto("87654321",
+                "65-43-21", "12345678", "12-34-56",
+                "David Riley", TransferType.PERSONAL, TransferCategory.ENTERTAINMENT,
+                "reference", BigDecimal.TEN);
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
+                transferService.createTransfer(transferRequestDto));
+
+        String expectedMessage = "Payee name mismatch";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
     void testGetTransferById() {
-        when(transferRepository.findById(any(UUID.class))).thenReturn(Optional.of(buildTransferForTest()));
+        when(transferRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
+                .thenReturn(Optional.of(buildTransferForTest()));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
 
@@ -105,7 +218,10 @@ class TransferServiceTest {
 
     @Test
     void testGetTransferByIdThrowsResourceNotFoundException() {
-        when(transferRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        when(transferRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
+                .thenReturn(Optional.empty());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest(securityId));
 
         UUID id = UUID.fromString("cb3ab214-7cc2-4bfc-962c-3a0c218aaa09");
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
@@ -113,24 +229,6 @@ class TransferServiceTest {
 
         String expectedMessage = "Transfer with ID: " + id + " not found";
         String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    void testGetTransferByIdThrowsInvalidRequestException() {
-        when(transferRepository.findById(any(UUID.class))).thenReturn(Optional.of(buildTransferForTest()));
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal())
-                .thenReturn(buildSecurityUserForTest(UUID.fromString("b70fe290-fde5-477c-8f50-0f33831b3ea3")));
-
-        UUID id = UUID.fromString("cb3ab214-7cc2-4bfc-962c-3a0c218aaa09");
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-                transferService.getTransferById(id));
-
-        String expectedMessage = "Invalid Request";
-        String actualMessage = exception.getMessage();
-
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
@@ -152,7 +250,8 @@ class TransferServiceTest {
         UUID userId = UUID.fromString("b14f1bae-d0ba-49cd-bb4c-29a657b586de");
 
         return Account.builder().id(accountId).balance(new BigDecimal("200.99"))
-                .user(User.builder().id(userId).build()).build();
+                .user(User.builder().id(userId).firstName("Maggie").lastName("Stephens").build())
+                .build();
     }
 
     private Transfer buildTransferForTest() {
@@ -160,6 +259,6 @@ class TransferServiceTest {
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.APRIL, 4, 13, 45, 0);
         Account account = buildAccountForTest();
 
-        return Transfer.builder().id(id).amount(BigDecimal.TEN).timestamp(timestamp).account(account).build();
+        return Transfer.builder().id(id).amount(BigDecimal.TEN).timestamp(timestamp).senderAccount(account).build();
     }
 }

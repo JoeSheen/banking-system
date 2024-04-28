@@ -273,7 +273,7 @@ class AccountServiceTest {
         return Account.builder().id(id).accountName(accountName).accountNumber("12345678")
                 .accountCard(buildAccountCard()).balance(BigDecimal.TEN).sortCode("12-34-56")
                 .createdAt(createdAt).updatedAt(updatedAt).user(user)
-                .transfers(List.of(buildTransferForTest())).build();
+                .sentTransfers(List.of(buildTransferForTest())).build();
     }
 
     private Transfer buildTransferForTest() {

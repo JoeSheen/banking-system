@@ -1,10 +1,12 @@
 package com.sheen.joe.bankingsystem.service.impl;
 
+import com.sheen.joe.bankingsystem.dto.transfer.DepositWithdrawTransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferRequestDto;
 import com.sheen.joe.bankingsystem.dto.transfer.TransferResponseDto;
 import com.sheen.joe.bankingsystem.entity.Account;
 import com.sheen.joe.bankingsystem.entity.Transfer;
 import com.sheen.joe.bankingsystem.entity.TransferType;
+import com.sheen.joe.bankingsystem.entity.User;
 import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.TransferMapper;
@@ -30,52 +32,95 @@ public class TransferServiceImpl implements TransferService {
     private final TransferMapper transferMapper;
 
     @Override
+    public TransferResponseDto createTransfer(@NonNull DepositWithdrawTransferRequestDto transferRequestDto) {
+        Account account = getAccountForTransfer(transferRequestDto.accountNumber(), transferRequestDto.sortCode());
+        if (checkAccountOwner(account)) {
+            throw new InvalidRequestException("Invalid Transfer Request");
+        }
+        Transfer transfer = performDepositOrWithdraw(transferRequestDto, account);
+        return transferMapper.toTransferResponse(transferRepository.save(transfer));
+    }
+
+    @Override
     public TransferResponseDto createTransfer(@NonNull TransferRequestDto transferRequestDto) {
-        String accountNumber = transferRequestDto.accountNumber();
-        Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() ->
-                new ResourceNotFoundException(String.format("Unknown Account Number: %s", accountNumber)));
-        Transfer transfer = transferMapper.toTransfer(transferRequestDto);
-        performTransfer(transfer, account);
+        Account senderAccount = getAccountForTransfer(transferRequestDto.senderAccountNumber(),
+                transferRequestDto.senderSortCode());
+        if (checkAccountOwner(senderAccount)) {
+            throw new InvalidRequestException("Invalid Transfer Request");
+        }
+        Account receiverAccount = getAccountForTransfer(transferRequestDto.receiverAccountNumber(),
+                transferRequestDto.receiverSortCode());
+        Transfer transfer = performAccountToAccountTransfer(senderAccount, receiverAccount, transferRequestDto);
         return transferMapper.toTransferResponse(transferRepository.save(transfer));
     }
 
     @Override
     public TransferResponseDto getTransferById(UUID id) {
-        Transfer transfer = transferRepository.findById(id).orElseThrow(() ->
+        UUID userId = SecurityUtils.getUserIdFromSecurityContext();
+        Transfer transfer = transferRepository.findByIdAndUserId(id, userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("Transfer with ID: %s not found", id)));
-        if (isNotUserAccount(transfer.getAccount().getUser().getId())) {
-            throw new InvalidRequestException("Invalid Request");
-        }
         return transferMapper.toTransferResponse(transfer);
     }
 
-    private void performTransfer(Transfer transfer, Account account) {
-        if (isNotUserAccount(account.getUser().getId())) {
-            throw new InvalidRequestException("Invalid Request");
+    private Transfer performAccountToAccountTransfer(Account sender, Account receiver, TransferRequestDto transferDto) {
+        if (hasInsufficientAccountBalance(TransferType.WITHDRAW, sender.getBalance(), transferDto.amount())) {
+            throw new InvalidRequestException("Account has insufficient funds");
         }
-        if (isTransferAllowed(transfer.getTransferType(), account.getBalance(), transfer.getAmount())) {
-            throw new InvalidRequestException("Insufficient funds to perform transfer");
+        if (!checkTransferType(transferDto.transferType())) {
+            throw new InvalidRequestException("Incorrect Transfer Type");
         }
-        updateAccountBalance(account, transfer.getTransferType(), transfer.getAmount());
-        transfer.setAccount(account);
+        if (checkReceiverOwnerName(transferDto.receiverFullName(), receiver.getUser())) {
+            throw new InvalidRequestException("Payee name mismatch");
+        }
+        updateAccountBalance(sender, TransferType.WITHDRAW, transferDto.amount());
+        updateAccountBalance(receiver, TransferType.DEPOSIT, transferDto.amount());
+        return transferMapper.toTransfer(transferDto, sender, receiver);
     }
 
-    private boolean isNotUserAccount(UUID accountUserId) {
-        return !accountUserId.equals(SecurityUtils.getUserIdFromSecurityContext());
-    }
-
-    private boolean isTransferAllowed(TransferType type, BigDecimal accountBalance, BigDecimal transferAmount) {
-        return type == TransferType.WITHDRAW && accountBalance.compareTo(transferAmount) < 0;
+    private Transfer performDepositOrWithdraw(DepositWithdrawTransferRequestDto transferRequestDto, Account account) {
+        TransferType type = transferRequestDto.transferType();
+        BigDecimal amount = transferRequestDto.amount();
+        if (hasInsufficientAccountBalance(type, account.getBalance(), amount)) {
+            throw new InvalidRequestException("Account has insufficient funds");
+        }
+        updateAccountBalance(account, type, amount);
+        return transferMapper.toTransfer(transferRequestDto, account);
     }
 
     private void updateAccountBalance(Account account, TransferType type, BigDecimal amount) {
-        BigDecimal newBalance;
+        BigDecimal newAccountBalance;
         switch (type) {
-            case DEPOSIT -> newBalance = account.getBalance().add(amount);
-            case WITHDRAW -> newBalance = account.getBalance().subtract(amount);
-            default -> throw new InvalidRequestException("Transfer type not supported");
+            case DEPOSIT -> newAccountBalance = account.getBalance().add(amount);
+            case WITHDRAW -> newAccountBalance = account.getBalance().subtract(amount);
+            default -> {
+                String message = String.format("Transfer type: %s not supported", type.toString().toLowerCase());
+                throw new InvalidRequestException(message);
+            }
         }
-        account.setBalance(newBalance);
+        account.setBalance(newAccountBalance);
         accountRepository.save(account);
+    }
+
+    private boolean hasInsufficientAccountBalance(TransferType type, BigDecimal accountBalance, BigDecimal transferAmount) {
+        return type == TransferType.WITHDRAW && accountBalance.compareTo(transferAmount) < 0;
+    }
+
+    private boolean checkTransferType(TransferType type) {
+        return type == TransferType.BUSINESS || type == TransferType.PERSONAL;
+    }
+
+    private Account getAccountForTransfer(String accountNumber, String sortCode) {
+        return accountRepository.findByAccountNumberAndSortCode(accountNumber, sortCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+    }
+
+    private boolean checkReceiverOwnerName(String receiverFullName, User receiverUser) {
+        String fullName = receiverUser.getFirstName() + " " + receiverUser.getLastName();
+        return !fullName.trim().equalsIgnoreCase(receiverFullName);
+    }
+
+    private boolean checkAccountOwner(Account account) {
+        UUID userId = SecurityUtils.getUserIdFromSecurityContext();
+        return !account.getUser().getId().equals(userId);
     }
 }

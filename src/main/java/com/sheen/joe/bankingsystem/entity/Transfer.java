@@ -38,9 +38,12 @@ public class Transfer {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
     @ShallowReference
-    private Account account;
+    private Account senderAccount;
+
+    @ManyToOne
+    @ShallowReference
+    private Account receiverAccount;
 
     @CreationTimestamp
     private LocalDateTime timestamp;

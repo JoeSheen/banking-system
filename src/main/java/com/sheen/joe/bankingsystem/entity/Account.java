@@ -51,8 +51,12 @@ public class Account {
     private User user;
 
     @ShallowReference
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transfer> transfers;
+    @OneToMany(mappedBy = "senderAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transfer> sentTransfers;
+
+    @ShallowReference
+    @OneToMany(mappedBy = "receiverAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transfer> receivedTransfers;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
