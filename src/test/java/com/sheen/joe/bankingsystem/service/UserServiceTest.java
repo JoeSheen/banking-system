@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.service;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountSummaryDto;
 import com.sheen.joe.bankingsystem.dto.user.UserResponseDto;
 import com.sheen.joe.bankingsystem.entity.Account;
@@ -14,6 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -90,14 +94,19 @@ class UserServiceTest {
 
     @Test
     void testGetAllUsers() {
-        when(userRepository.findAll()).thenReturn(List.of(buildUserForTest("LauraSparrow1wjAtk")));
+        Page<User> userPage = new PageImpl<>(List.of(buildUserForTest("LauraSparrow1wjAtk")));
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(userPage);
 
-        List<UserResponseDto> userResponseList = userService.getAllUsers();
-        // asserts on list
-        assertFalse(userResponseList.isEmpty());
-        assertEquals(1, userResponseList.size());
-        // asserts on list content
-        assertUserResponseDto(userResponseList.get(0), "LauraSparrow1wjAtk");
+        CollectionResponseDto<UserResponseDto> collectionResponseDto = userService.getAllUsers(0, 25);
+
+        // asserts collection response dto
+        assertNotNull(collectionResponseDto);
+        assertEquals(1, collectionResponseDto.content().size());
+        assertEquals(0, collectionResponseDto.currentPage());
+        assertEquals(1, collectionResponseDto.totalPages());
+        assertEquals(1, collectionResponseDto.totalElements());
+        // asserts collection content (UserResponseDto)
+        assertUserResponseDto(collectionResponseDto.content().get(0), "LauraSparrow1wjAtk");
     }
 
     private User buildUserForTest(String username) {

@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.dto.user;
 
+import com.sheen.joe.bankingsystem.dto.CollectableDtoI;
 import com.sheen.joe.bankingsystem.dto.account.AccountSummaryDto;
 
 import java.time.LocalDate;
@@ -15,4 +16,4 @@ public record UserResponseDto(
         String email,
         String username,
         Set<AccountSummaryDto> accounts
-) {}
+) implements CollectableDtoI {}

@@ -34,9 +34,9 @@ public class TransferMapperImpl implements TransferMapper {
     }
 
     @Override
-    public TransferResponseDto toTransferResponse(Transfer transfer) {
+    public TransferResponseDto toTransferResponse(Transfer transfer, char symbol) {
         return new TransferResponseDto(transfer.getId(), transfer.getTransferType(),
                 transfer.getAmount(), transfer.getReference(), transfer.getCategory(),
-                transfer.getTimestamp());
+                transfer.getTimestamp(), symbol);
     }
 }

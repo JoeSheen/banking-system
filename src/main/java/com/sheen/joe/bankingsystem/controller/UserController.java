@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.user.UserResponseDto;
 import com.sheen.joe.bankingsystem.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -31,10 +31,11 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UserResponseDto>> getAll() {
-        List<UserResponseDto> userResponseDtoList = userService.getAllUsers();
-        log.info("Found {} users", userResponseDtoList.size());
-        return new ResponseEntity<>(userResponseDtoList, HttpStatus.OK);
+    public ResponseEntity<CollectionResponseDto<UserResponseDto>> getAll(@RequestParam(defaultValue = "0") Integer pageNumber,
+            @RequestParam(defaultValue = "25") Integer pageSize) {
+        CollectionResponseDto<UserResponseDto> collectionResponse = userService.getAllUsers(pageNumber, pageSize);
+        log.info("Found {} users on page {}", collectionResponse.content().size(), collectionResponse.currentPage());
+        return new ResponseEntity<>(collectionResponse, HttpStatus.OK);
     }
 
     @PreAuthorize("#id == authentication.principal.id")

@@ -73,7 +73,7 @@ class AccountMapperTest {
     private TransferSummaryDto expectedTransferSummaryDto() {
         UUID id = UUID.fromString("0fcefe52-edb0-4c48-a8fd-e2c4e447b32b");
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.APRIL, 1, 16, 13, 59);
-        return new TransferSummaryDto(id, new BigDecimal("15.99"), timestamp);
+        return new TransferSummaryDto(id, new BigDecimal("15.99"), timestamp, '-');
     }
 
     private AccountCard buildAccountCard() {

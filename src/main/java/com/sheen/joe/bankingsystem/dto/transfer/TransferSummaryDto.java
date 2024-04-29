@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.UUID;
 
-public record TransferSummaryDto(UUID id, BigDecimal amount, LocalDateTime timestamp) implements Comparator<TransferSummaryDto> {
+public record TransferSummaryDto(UUID id, BigDecimal amount, LocalDateTime timestamp, Character symbol) implements Comparator<TransferSummaryDto> {
 
     @Override
     public int compare(TransferSummaryDto transferSummaryDto1, TransferSummaryDto transferSummaryDto2) {

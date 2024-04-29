@@ -12,5 +12,5 @@ public interface TransferMapper {
 
     Transfer toTransfer(TransferRequestDto transferRequestDto, Account senderAccount, Account receiverAccount);
 
-    TransferResponseDto toTransferResponse(Transfer transfer);
+    TransferResponseDto toTransferResponse(Transfer transfer, char symbol);
 }

@@ -1,8 +1,8 @@
 package com.sheen.joe.bankingsystem.service;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.user.UserResponseDto;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
@@ -11,6 +11,6 @@ public interface UserService {
 
     UserResponseDto getUserById(UUID id);
 
-    List<UserResponseDto> getAllUsers();
+    CollectionResponseDto<UserResponseDto> getAllUsers(int pageNumber, int pageSize);
 
 }

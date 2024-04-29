@@ -31,6 +31,10 @@ public class TransferServiceImpl implements TransferService {
 
     private final TransferMapper transferMapper;
 
+    private static final char PLUS = '+';
+
+    private static final char MINUS = '-';
+
     @Override
     public TransferResponseDto createTransfer(@NonNull DepositWithdrawTransferRequestDto transferRequestDto) {
         Account account = getAccountForTransfer(transferRequestDto.accountNumber(), transferRequestDto.sortCode());
@@ -38,7 +42,8 @@ public class TransferServiceImpl implements TransferService {
             throw new InvalidRequestException("Invalid Transfer Request");
         }
         Transfer transfer = performDepositOrWithdraw(transferRequestDto, account);
-        return transferMapper.toTransferResponse(transferRepository.save(transfer));
+        char symbol = computeTransferSymbol(transfer);
+        return transferMapper.toTransferResponse(transferRepository.save(transfer), symbol);
     }
 
     @Override
@@ -51,7 +56,7 @@ public class TransferServiceImpl implements TransferService {
         Account receiverAccount = getAccountForTransfer(transferRequestDto.receiverAccountNumber(),
                 transferRequestDto.receiverSortCode());
         Transfer transfer = performAccountToAccountTransfer(senderAccount, receiverAccount, transferRequestDto);
-        return transferMapper.toTransferResponse(transferRepository.save(transfer));
+        return transferMapper.toTransferResponse(transferRepository.save(transfer), MINUS);
     }
 
     @Override
@@ -59,7 +64,8 @@ public class TransferServiceImpl implements TransferService {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
         Transfer transfer = transferRepository.findByIdAndUserId(id, userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("Transfer with ID: %s not found", id)));
-        return transferMapper.toTransferResponse(transfer);
+        char symbol = computeTransferSymbol(transfer);
+        return transferMapper.toTransferResponse(transfer, symbol);
     }
 
     private Transfer performAccountToAccountTransfer(Account sender, Account receiver, TransferRequestDto transferDto) {
@@ -122,5 +128,16 @@ public class TransferServiceImpl implements TransferService {
     private boolean checkAccountOwner(Account account) {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
         return !account.getUser().getId().equals(userId);
+    }
+
+    private char computeTransferSymbol(Transfer transfer) {
+        char symbol;
+        if (transfer.getReceiverAccount() == null) {
+            symbol = transfer.getTransferType() == TransferType.DEPOSIT ? PLUS : MINUS;
+        } else {
+            UUID receivedUserId = transfer.getReceiverAccount().getUser().getId();
+            symbol = receivedUserId.equals(SecurityUtils.getUserIdFromSecurityContext()) ? PLUS : MINUS;
+        }
+        return symbol;
     }
 }

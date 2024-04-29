@@ -286,7 +286,7 @@ class AccountServiceTest {
     private TransferSummaryDto expectedTransferSummaryDto() {
         UUID id = UUID.fromString("c8725324-9bb9-4b8a-9059-abbfa953c53e");
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.APRIL, 1, 16, 1, 30);
-        return new TransferSummaryDto(id, BigDecimal.ONE, timestamp);
+        return new TransferSummaryDto(id, BigDecimal.ONE, timestamp, '-');
     }
 
     private AccountCard buildAccountCard() {

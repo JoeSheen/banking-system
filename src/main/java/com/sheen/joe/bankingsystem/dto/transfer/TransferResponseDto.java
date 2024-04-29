@@ -13,5 +13,6 @@ public record TransferResponseDto(
         BigDecimal amount,
         String reference,
         TransferCategory category,
-        LocalDateTime timestamp
+        LocalDateTime timestamp,
+        Character symbol
 ) {}

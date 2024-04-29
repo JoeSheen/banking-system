@@ -1,5 +1,6 @@
 package com.sheen.joe.bankingsystem.controller;
 
+import com.sheen.joe.bankingsystem.dto.CollectionResponseDto;
 import com.sheen.joe.bankingsystem.dto.account.AccountSummaryDto;
 import com.sheen.joe.bankingsystem.dto.user.UserResponseDto;
 import com.sheen.joe.bankingsystem.service.UserService;
@@ -49,20 +50,25 @@ class UserControllerTest {
 
     @Test
     void testGetAll() {
-        when(userService.getAllUsers()).thenReturn(List.of(buildUserResponseForTest()));
+        List<UserResponseDto> content = List.of(buildUserResponseForTest());
+        when(userService.getAllUsers(0, 25)).thenReturn(new CollectionResponseDto<>(content, 0,
+                1, 1, false));
 
-        ResponseEntity<List<UserResponseDto>> usersResponseEntity = userController.getAll();
-        //asserts on response entity
-        assertNotNull(usersResponseEntity);
-        assertEquals(usersResponseEntity.getStatusCode(), HttpStatus.OK);
-        assertTrue(usersResponseEntity.hasBody());
-        // asserts on list
-        List<UserResponseDto> users = usersResponseEntity.getBody();
-        assertNotNull(users);
-        assertFalse(users.isEmpty());
-        assertEquals(1, users.size());
-        // asserts on list content
-        assertUserResponseDto(users.get(0));
+        ResponseEntity<CollectionResponseDto<UserResponseDto>> userResponseEntity = userController.getAll(0, 25);
+        // asserts for response entity
+        assertNotNull(userResponseEntity);
+        assertEquals(userResponseEntity.getStatusCode(), HttpStatus.OK);
+        assertTrue(userResponseEntity.hasBody());
+        // asserts on collection response dto
+        CollectionResponseDto<UserResponseDto> collectionResponse = userResponseEntity.getBody();
+        assertNotNull(collectionResponse);
+        assertEquals(1, collectionResponse.content().size());
+        assertEquals(0, collectionResponse.currentPage());
+        assertEquals(1, collectionResponse.totalPages());
+        assertEquals(1, collectionResponse.totalElements());
+        assertFalse(collectionResponse.sorted());
+        // asserts for user response dto
+        assertUserResponseDto(collectionResponse.content().get(0));
     }
 
     @Test

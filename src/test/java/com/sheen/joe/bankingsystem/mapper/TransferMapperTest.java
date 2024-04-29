@@ -71,7 +71,7 @@ class TransferMapperTest {
         Transfer transfer = Transfer.builder().id(id).transferType(TransferType.WITHDRAW).amount(new BigDecimal("100.99"))
                 .reference("reference").category(TransferCategory.ENTERTAINMENT).timestamp(timestamp).build();
 
-        TransferResponseDto transferResponseDto = transferMapper.toTransferResponse(transfer);
+        TransferResponseDto transferResponseDto = transferMapper.toTransferResponse(transfer, '-');
 
         assertNotNull(transferResponseDto);
         assertEquals(UUID.fromString("02fa9f78-e259-4bbe-8964-b8ea4937373c"), transferResponseDto.id());
@@ -80,6 +80,7 @@ class TransferMapperTest {
         assertEquals("reference", transferResponseDto.reference());
         assertEquals(TransferCategory.ENTERTAINMENT, transferResponseDto.category());
         assertEquals(LocalDateTime.of(2024, Month.MARCH, 29, 14, 30, 0), transferResponseDto.timestamp());
+        assertEquals('-', transferResponseDto.symbol());
     }
 
     private Account buildAccountForTest(String accountNumber, String sortCode, UUID id) {

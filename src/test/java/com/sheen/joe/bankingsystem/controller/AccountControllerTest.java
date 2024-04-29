@@ -180,6 +180,6 @@ class AccountControllerTest {
     private TransferSummaryDto buildTransferSummaryDtoForTest() {
         UUID id = UUID.fromString("2e7f9f62-ef5e-499c-bce6-565999315c22");
         LocalDateTime now = LocalDateTime.of(2024, Month.APRIL, 1,15,38,50);
-        return new TransferSummaryDto(id, new BigDecimal("5.99"), now);
+        return new TransferSummaryDto(id, new BigDecimal("5.99"), now, '+');
     }
 }

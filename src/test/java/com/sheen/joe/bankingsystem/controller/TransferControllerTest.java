@@ -39,7 +39,7 @@ class TransferControllerTest {
     @Test
     void testPerformDeposit() {
         when(transferService.createTransfer(any(DepositWithdrawTransferRequestDto.class)))
-                .thenReturn(buildTransferResponseForTest(TransferType.DEPOSIT, "Deposit", TransferCategory.GENERAL, new BigDecimal("15.30")));
+                .thenReturn(buildTransferResponseForTest(TransferType.DEPOSIT, "Deposit", TransferCategory.GENERAL, new BigDecimal("15.30"), '+'));
 
         DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
                 "12-34-56", TransferType.DEPOSIT, new BigDecimal("25.99"));
@@ -47,13 +47,13 @@ class TransferControllerTest {
 
         assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
         assertTransferResponse(transferResponseEntity.getBody(), TransferType.DEPOSIT, new BigDecimal("15.30"),
-                "Deposit", TransferCategory.GENERAL);
+                "Deposit", TransferCategory.GENERAL, '+');
     }
 
     @Test
     void testPerformWithdrawal() {
         when(transferService.createTransfer(any(DepositWithdrawTransferRequestDto.class)))
-                .thenReturn(buildTransferResponseForTest(TransferType.WITHDRAW, "Withdraw", TransferCategory.GENERAL, new BigDecimal("15.30")));
+                .thenReturn(buildTransferResponseForTest(TransferType.WITHDRAW, "Withdraw", TransferCategory.GENERAL, new BigDecimal("15.30"), '-'));
 
         DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
                 "12-34-56", TransferType.WITHDRAW, new BigDecimal("15.30"));
@@ -61,13 +61,13 @@ class TransferControllerTest {
 
         assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
         assertTransferResponse(transferResponseEntity.getBody(), TransferType.WITHDRAW, new BigDecimal("15.30"),
-                "Withdraw", TransferCategory.GENERAL);
+                "Withdraw", TransferCategory.GENERAL, '-');
     }
 
     @Test
     void testPerformTransfer() {
         when(transferService.createTransfer(any(TransferRequestDto.class)))
-                .thenReturn(buildTransferResponseForTest(TransferType.PERSONAL, "reference", TransferCategory.TRAVEL, new BigDecimal("75.00")));
+                .thenReturn(buildTransferResponseForTest(TransferType.PERSONAL, "reference", TransferCategory.TRAVEL, new BigDecimal("75.00"), '+'));
 
         TransferRequestDto transferRequestDto = new TransferRequestDto("12345678", "12-34-56",
                 "87654321", "65-43-21", "Jeffrey Oshea",
@@ -76,20 +76,20 @@ class TransferControllerTest {
 
         assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
         assertTransferResponse(transferResponseEntity.getBody(), TransferType.PERSONAL, new BigDecimal("75.00"),
-                "reference", TransferCategory.TRAVEL);
+                "reference", TransferCategory.TRAVEL, '+');
     }
 
     @Test
     void testGetById() {
         when(transferService.getTransferById(any(UUID.class)))
-                .thenReturn(buildTransferResponseForTest(TransferType.DEPOSIT, "Deposit", TransferCategory.GENERAL, new BigDecimal("150.47")));
+                .thenReturn(buildTransferResponseForTest(TransferType.DEPOSIT, "Deposit", TransferCategory.GENERAL, new BigDecimal("150.47"), '-'));
 
         UUID id = UUID.fromString("ff9efba8-7953-4065-8499-5f86cb3bc226");
         ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.getById(id);
 
         assertResponseEntity(transferResponseEntity, HttpStatus.OK);
         assertTransferResponse(transferResponseEntity.getBody(), TransferType.DEPOSIT, new BigDecimal("150.47"),
-                "Deposit", TransferCategory.GENERAL);
+                "Deposit", TransferCategory.GENERAL, '-');
     }
 
     private void assertResponseEntity(ResponseEntity<TransferResponseDto> responseEntity, HttpStatus expectedStatus) {
@@ -99,7 +99,7 @@ class TransferControllerTest {
     }
 
     private void assertTransferResponse(TransferResponseDto transferResponseDto, TransferType expectedType,
-            BigDecimal expectedAmount, String expectedReference, TransferCategory expectedCategory) {
+            BigDecimal expectedAmount, String expectedReference, TransferCategory expectedCategory, char expectedSymbol) {
         assertNotNull(transferResponseDto);
         assertEquals(UUID.fromString("ff9efba8-7953-4065-8499-5f86cb3bc226"), transferResponseDto.id());
         assertEquals(expectedType, transferResponseDto.type());
@@ -107,11 +107,13 @@ class TransferControllerTest {
         assertEquals(expectedReference, transferResponseDto.reference());
         assertEquals(expectedCategory, transferResponseDto.category());
         assertEquals(LocalDateTime.of(2024, Month.MARCH, 29, 20, 11, 3), transferResponseDto.timestamp());
+        assertEquals(expectedSymbol, transferResponseDto.symbol());
     }
 
-    private TransferResponseDto buildTransferResponseForTest(TransferType type, String reference, TransferCategory category, BigDecimal amount) {
+    private TransferResponseDto buildTransferResponseForTest(TransferType type, String reference, TransferCategory category,
+            BigDecimal amount, char symbol) {
         UUID id = UUID.fromString("ff9efba8-7953-4065-8499-5f86cb3bc226");
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.MARCH, 29, 20, 11, 3);
-        return new TransferResponseDto(id, type, amount, reference, category, timestamp);
+        return new TransferResponseDto(id, type, amount, reference, category, timestamp, symbol);
     }
 }
