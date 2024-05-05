@@ -279,8 +279,11 @@ class AccountServiceTest {
     private Transfer buildTransferForTest() {
         UUID id = UUID.fromString("c8725324-9bb9-4b8a-9059-abbfa953c53e");
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.APRIL, 1, 16, 1, 30);
-        return Transfer.builder().id(id).amount(BigDecimal.ONE)
-                .timestamp(timestamp).build();
+        Account account = new Account();
+        account.setId(UUID.fromString("6dabe048-fc46-456c-bc68-66b1380b26a5"));
+
+        return Transfer.builder().id(id).amount(BigDecimal.ONE).timestamp(timestamp).senderAccount(account)
+                .receiverAccount(account).build();
     }
 
     private TransferSummaryDto expectedTransferSummaryDto() {

@@ -67,7 +67,11 @@ class AccountMapperTest {
     private Transfer buildTransferForTest() {
         UUID id = UUID.fromString("0fcefe52-edb0-4c48-a8fd-e2c4e447b32b");
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.APRIL, 1, 16, 13, 59);
-        return Transfer.builder().id(id).amount(new BigDecimal("15.99")).timestamp(timestamp).build();
+        Account account = new Account();
+        account.setId(UUID.fromString("0e15ebf7-6d17-4901-bfd5-59d001a964b5"));
+
+        return Transfer.builder().id(id).amount(new BigDecimal("15.99")).timestamp(timestamp)
+                .senderAccount(account).receiverAccount(account).build();
     }
 
     private TransferSummaryDto expectedTransferSummaryDto() {

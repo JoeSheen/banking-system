@@ -73,7 +73,7 @@ class TransferServiceTest {
 
         TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
 
-        assertTransferResponseDto(transferResponseDto);
+        assertTransferResponseDto(transferResponseDto, '+');
     }
 
     @Test
@@ -89,7 +89,7 @@ class TransferServiceTest {
 
         TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
 
-        assertTransferResponseDto(transferResponseDto);
+        assertTransferResponseDto(transferResponseDto, '-');
     }
 
     @Test
@@ -160,7 +160,7 @@ class TransferServiceTest {
 
         TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
 
-        assertTransferResponseDto(transferResponseDto);
+        assertTransferResponseDto(transferResponseDto, '-');
     }
 
     @Test
@@ -213,7 +213,7 @@ class TransferServiceTest {
         UUID id = UUID.fromString("cb3ab214-7cc2-4bfc-962c-3a0c218aaa09");
         TransferResponseDto transferResponseDto = transferService.getTransferById(id);
 
-        assertTransferResponseDto(transferResponseDto);
+        assertTransferResponseDto(transferResponseDto, '-');
     }
 
     @Test
@@ -232,11 +232,12 @@ class TransferServiceTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
-    private void assertTransferResponseDto(TransferResponseDto transferResponseDto) {
+    private void assertTransferResponseDto(TransferResponseDto transferResponseDto, char expectedSymbol) {
         assertNotNull(transferResponseDto);
         assertEquals(UUID.fromString("cb3ab214-7cc2-4bfc-962c-3a0c218aaa09"), transferResponseDto.id());
         assertEquals(BigDecimal.TEN, transferResponseDto.amount());
         assertEquals(LocalDateTime.of(2024, Month.APRIL, 4, 13, 45, 0), transferResponseDto.timestamp());
+        assertEquals(expectedSymbol, transferResponseDto.symbol());
     }
 
     private SecurityUser buildSecurityUserForTest(UUID id) {
@@ -259,6 +260,7 @@ class TransferServiceTest {
         LocalDateTime timestamp = LocalDateTime.of(2024, Month.APRIL, 4, 13, 45, 0);
         Account account = buildAccountForTest();
 
-        return Transfer.builder().id(id).amount(BigDecimal.TEN).timestamp(timestamp).senderAccount(account).build();
+        return Transfer.builder().id(id).amount(BigDecimal.TEN).timestamp(timestamp).senderAccount(account)
+                .receiverAccount(account).build();
     }
 }

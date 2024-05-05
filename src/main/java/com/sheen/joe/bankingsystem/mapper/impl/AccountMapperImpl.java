@@ -7,8 +7,8 @@ import com.sheen.joe.bankingsystem.dto.transfer.TransferSummaryDto;
 import com.sheen.joe.bankingsystem.entity.Account;
 import com.sheen.joe.bankingsystem.entity.AccountCard;
 import com.sheen.joe.bankingsystem.entity.Transfer;
-import com.sheen.joe.bankingsystem.entity.TransferType;
 import com.sheen.joe.bankingsystem.mapper.AccountMapper;
+import com.sheen.joe.bankingsystem.util.TransferUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -36,26 +36,16 @@ public class AccountMapperImpl implements AccountMapper {
     }
 
     private List<TransferSummaryDto> toTransferSummaries(List<Transfer> sentTransfers, List<Transfer> receivedTransfers) {
-        Stream<TransferSummaryDto> sentStream = sentTransfers == null ? Stream.empty() : sentTransfers.stream().map(transfer -> {
-            char symbol = computeTransferSummarySymbol(transfer.getTransferType());
-            return new TransferSummaryDto(transfer.getId(), transfer.getAmount(), transfer.getTimestamp(), symbol);
-        });
-        Stream<TransferSummaryDto> receivedStream = receivedTransfers == null ? Stream.empty() : receivedTransfers.stream()
-                .map(transfer -> new TransferSummaryDto(transfer.getId(), transfer.getAmount(), transfer.getTimestamp(), '+'));
+        Stream<Transfer> sentStream = sentTransfers == null ? Stream.empty() : sentTransfers.stream();
+        Stream<Transfer> receivedStream = receivedTransfers == null ? Stream.empty() : receivedTransfers.stream();
 
-        return Stream.concat(sentStream, receivedStream).sorted(Comparator.comparing(TransferSummaryDto::timestamp,
-                        Comparator.reverseOrder())).toList();
+        return Stream.concat(sentStream, receivedStream).distinct().map(transfer -> {
+            char symbol = TransferUtils.computeTransferSymbol(transfer);
+            return new TransferSummaryDto(transfer.getId(), transfer.getAmount(), transfer.getTimestamp(), symbol);
+        }).sorted(Comparator.comparing(TransferSummaryDto::timestamp, Comparator.reverseOrder())).toList();
     }
 
     private AccountCardSummaryDto toAccountCardSummary(AccountCard card) {
         return new AccountCardSummaryDto(card.getId(), card.getCardNumber());
-    }
-
-    private char computeTransferSummarySymbol(TransferType type) {
-        if (type == TransferType.DEPOSIT) {
-            return '+';
-        } else {
-            return '-';
-        }
     }
 }

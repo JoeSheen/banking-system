@@ -3,7 +3,6 @@ package com.sheen.joe.bankingsystem.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import org.javers.core.metamodel.annotation.ShallowReference;
 
@@ -41,11 +40,11 @@ public class Transfer {
     @ShallowReference
     private Account senderAccount;
 
+    @NotNull
     @ManyToOne
     @ShallowReference
     private Account receiverAccount;
 
-    @CreationTimestamp
     private LocalDateTime timestamp;
 
 }

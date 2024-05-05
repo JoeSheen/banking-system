@@ -14,9 +14,11 @@ import com.sheen.joe.bankingsystem.repository.AccountRepository;
 import com.sheen.joe.bankingsystem.repository.TransferRepository;
 import com.sheen.joe.bankingsystem.security.SecurityUtils;
 import com.sheen.joe.bankingsystem.service.TransferService;
+import com.sheen.joe.bankingsystem.util.TransferUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -31,22 +33,22 @@ public class TransferServiceImpl implements TransferService {
 
     private final TransferMapper transferMapper;
 
-    private static final char PLUS = '+';
-
     private static final char MINUS = '-';
 
     @Override
+    @Transactional
     public TransferResponseDto createTransfer(@NonNull DepositWithdrawTransferRequestDto transferRequestDto) {
         Account account = getAccountForTransfer(transferRequestDto.accountNumber(), transferRequestDto.sortCode());
         if (checkAccountOwner(account)) {
             throw new InvalidRequestException("Invalid Transfer Request");
         }
         Transfer transfer = performDepositOrWithdraw(transferRequestDto, account);
-        char symbol = computeTransferSymbol(transfer);
+        char symbol = TransferUtils.computeTransferSymbol(transfer);
         return transferMapper.toTransferResponse(transferRepository.save(transfer), symbol);
     }
 
     @Override
+    @Transactional
     public TransferResponseDto createTransfer(@NonNull TransferRequestDto transferRequestDto) {
         Account senderAccount = getAccountForTransfer(transferRequestDto.senderAccountNumber(),
                 transferRequestDto.senderSortCode());
@@ -60,11 +62,12 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TransferResponseDto getTransferById(UUID id) {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
         Transfer transfer = transferRepository.findByIdAndUserId(id, userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("Transfer with ID: %s not found", id)));
-        char symbol = computeTransferSymbol(transfer);
+        char symbol = TransferUtils.computeTransferSymbol(transfer);
         return transferMapper.toTransferResponse(transfer, symbol);
     }
 
@@ -130,14 +133,4 @@ public class TransferServiceImpl implements TransferService {
         return !account.getUser().getId().equals(userId);
     }
 
-    private char computeTransferSymbol(Transfer transfer) {
-        char symbol;
-        if (transfer.getReceiverAccount() == null) {
-            symbol = transfer.getTransferType() == TransferType.DEPOSIT ? PLUS : MINUS;
-        } else {
-            UUID receivedUserId = transfer.getReceiverAccount().getUser().getId();
-            symbol = receivedUserId.equals(SecurityUtils.getUserIdFromSecurityContext()) ? PLUS : MINUS;
-        }
-        return symbol;
-    }
 }

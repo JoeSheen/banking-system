@@ -14,6 +14,6 @@ import java.util.UUID;
 @JaversSpringDataAuditable
 public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 
-    @Query("SELECT t FROM Transfer t WHERE t.id = :#{#id} AND t.senderAccount.user.id = :#{#userId}")
+    @Query("SELECT t FROM Transfer t WHERE t.id = :id AND (t.senderAccount.user.id = :userId OR t.receiverAccount.user.id = :userId)")
     Optional<Transfer> findByIdAndUserId(@Param("id") UUID id, @Param("userId") UUID userId);
 }
