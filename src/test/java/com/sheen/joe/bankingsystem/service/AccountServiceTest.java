@@ -78,6 +78,21 @@ class AccountServiceTest {
     }
 
     @Test
+    void testCreateAccountThrowsResourceNotFoundException() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        AccountRequestDto requestDto = new AccountRequestDto("Test Account");
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () ->
+                accountService.createAccount(requestDto));
+
+        String expectedMessage = "User with ID: 6a428b76-823d-43b0-b6b3-b3e461368862 not found";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
     void testUpdateAccount() {
         when(accountRepository.findByIdAndUserId(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(buildAccountForTest("Test Account")));

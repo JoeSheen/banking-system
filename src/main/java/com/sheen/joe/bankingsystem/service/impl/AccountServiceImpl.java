@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponseDto createAccount(AccountRequestDto accountRequestDto) {
         UUID userId = SecurityUtils.getUserIdFromSecurityContext();
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new ResourceNotFoundException(String.format(ACCOUNT_EXCEPTION_MSG, userId)));
+                new ResourceNotFoundException(String.format("User with ID: %s not found", userId)));
         Account account = buildAccountForUser(accountRequestDto, user);
         return accountMapper.toAccountResponse(accountRepository.save(account));
     }

@@ -22,17 +22,10 @@ public class TransferController {
 
     private final TransferService transferService;
 
-    @PostMapping(path = "/deposit", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransferResponseDto> performDeposit(@Valid @RequestBody DepositWithdrawTransferRequestDto transferRequestDto) {
+    @PostMapping(path = {"/deposit", "/withdraw"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TransferResponseDto> performDepositOrWithdraw(@Valid @RequestBody DepositWithdrawTransferRequestDto transferRequestDto) {
         TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
-        log.info("Deposit with ID: {} created", transferResponseDto.id());
-        return new ResponseEntity<>(transferResponseDto, HttpStatus.CREATED);
-    }
-
-    @PostMapping(path = "/withdraw", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransferResponseDto> performWithdrawal(@Valid @RequestBody DepositWithdrawTransferRequestDto transferRequestDto) {
-        TransferResponseDto transferResponseDto = transferService.createTransfer(transferRequestDto);
-        log.info("Withdrawal with ID: {} created", transferResponseDto.id());
+        log.info("{} with ID: {} created", transferResponseDto.reference(), transferResponseDto.id());
         return new ResponseEntity<>(transferResponseDto, HttpStatus.CREATED);
     }
 

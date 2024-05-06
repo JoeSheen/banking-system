@@ -43,7 +43,7 @@ class TransferControllerTest {
 
         DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
                 "12-34-56", TransferType.DEPOSIT, new BigDecimal("25.99"));
-        ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.performDeposit(transferRequestDto);
+        ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.performDepositOrWithdraw(transferRequestDto);
 
         assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
         assertTransferResponse(transferResponseEntity.getBody(), TransferType.DEPOSIT, new BigDecimal("15.30"),
@@ -57,7 +57,7 @@ class TransferControllerTest {
 
         DepositWithdrawTransferRequestDto transferRequestDto = new DepositWithdrawTransferRequestDto("12345678",
                 "12-34-56", TransferType.WITHDRAW, new BigDecimal("15.30"));
-        ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.performWithdrawal(transferRequestDto);
+        ResponseEntity<TransferResponseDto> transferResponseEntity = transferController.performDepositOrWithdraw(transferRequestDto);
 
         assertResponseEntity(transferResponseEntity, HttpStatus.CREATED);
         assertTransferResponse(transferResponseEntity.getBody(), TransferType.WITHDRAW, new BigDecimal("15.30"),
