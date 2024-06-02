@@ -65,14 +65,13 @@ class AuthenticationMapperTest {
     @Test
     void testToAuthenticationResponse() {
         AuthenticationResponseDto responseDto =
-                authenticationMapper.toAuthenticationResponse(user, "fake-token");
+                authenticationMapper.toAuthenticationResponse(user);
 
         assertNotNull(responseDto);
         assertEquals(UUID.fromString("1f1deb3c-c3a5-4fac-842c-a729010405c6"), responseDto.id());
         assertEquals("ChloeWilliams0yMtXj", responseDto.username());
         assertEquals("Chloe", responseDto.firstName());
         assertEquals("Williams", responseDto.lastName());
-        assertEquals("fake-token", responseDto.token());
     }
 
     private User buildUserForTest() {

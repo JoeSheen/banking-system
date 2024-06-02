@@ -6,6 +6,5 @@ public record AuthenticationResponseDto(
         UUID id,
         String username,
         String firstName,
-        String lastName,
-        String token
+        String lastName
 ) {}

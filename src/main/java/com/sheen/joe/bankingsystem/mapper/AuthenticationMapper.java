@@ -8,6 +8,6 @@ public interface AuthenticationMapper {
 
     User toUser(RegisterRequestDto registerRequestDto);
 
-    AuthenticationResponseDto toAuthenticationResponse(User user, String token);
+    AuthenticationResponseDto toAuthenticationResponse(User user);
 
 }

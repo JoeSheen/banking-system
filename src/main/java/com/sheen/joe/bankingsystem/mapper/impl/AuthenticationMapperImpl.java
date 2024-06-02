@@ -35,8 +35,8 @@ public class AuthenticationMapperImpl implements AuthenticationMapper {
     }
 
     @Override
-    public AuthenticationResponseDto toAuthenticationResponse(User user, String token) {
+    public AuthenticationResponseDto toAuthenticationResponse(User user) {
         return new AuthenticationResponseDto(user.getId(), user.getUsername(),
-                user.getFirstName(), user.getLastName(), token);
+                user.getFirstName(), user.getLastName());
     }
 }

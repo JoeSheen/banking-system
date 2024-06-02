@@ -6,8 +6,12 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sheen.joe.bankingsystem.exception.TokenVerificationException;
 import com.sheen.joe.bankingsystem.util.StringUtils;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,22 +22,30 @@ public class JwtUtils {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String getToken(String authenticationHeader) {
-        return authenticationHeader.substring(7);
+    private static final String BEARER = "Bearer";
+
+    public String getTokenFromRequest(HttpServletRequest request) {
+        Cookie requestCookie = WebUtils.getCookie(request, BEARER);
+        if (requestCookie != null) {
+            return requestCookie.getValue();
+        }
+        return null;
     }
 
     public String getUsernameSubject(String token) {
         return decodeToken(token).getSubject();
     }
 
-    public String generateToken(String username) {
+    public String generateTokenCookie(String username) {
         Instant now = Instant.now();
-        Instant expiresAt = now.plus(Duration.ofMinutes(10));
+        Instant expiresAt = now.plus(Duration.ofMinutes(15));
 
         Algorithm algorithm = Algorithm.HMAC256(secret);
-
-        return JWT.create().withSubject(username).withIssuedAt(now)
+        String jwt = JWT.create().withSubject(username).withIssuedAt(now)
                 .withExpiresAt(expiresAt).sign(algorithm);
+
+        return ResponseCookie.from(BEARER, jwt).path("/api").maxAge(Duration.ofMinutes(15))
+                .httpOnly(true).build().toString();
     }
 
     public boolean validateToken(String token) {

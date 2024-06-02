@@ -11,7 +11,6 @@ import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.AuthenticationMapper;
 import com.sheen.joe.bankingsystem.mapper.impl.AuthenticationMapperImpl;
 import com.sheen.joe.bankingsystem.repository.UserRepository;
-import com.sheen.joe.bankingsystem.security.JwtUtils;
 import com.sheen.joe.bankingsystem.security.SecurityUser;
 import com.sheen.joe.bankingsystem.service.impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,9 +39,6 @@ class AuthenticationServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private JwtUtils jwtUtils;
-
-    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
@@ -64,7 +60,7 @@ class AuthenticationServiceTest {
                 "elizabeth.fleming@hotmail.com", "password");
 
         AuthenticationMapper mapper = new AuthenticationMapperImpl(passwordEncoder);
-        authenticationService = new AuthenticationServiceImpl(userRepository, jwtUtils, mapper, authenticationManager);
+        authenticationService = new AuthenticationServiceImpl(userRepository, mapper, authenticationManager);
     }
 
     @Test
@@ -72,7 +68,6 @@ class AuthenticationServiceTest {
         when(userRepository.existsByPhoneNumber("01234567890")).thenReturn(false);
         when(userRepository.existsByEmail("elizabeth.fleming@hotmail.com")).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(buildUserForTest());
-        when(jwtUtils.generateToken("ElizabethFleming6AUTu3")).thenReturn("fake-token");
 
         AuthenticationResponseDto responseDto = authenticationService.registerUser(requestDto);
         assertAuthenticationResponseDto(responseDto);
@@ -95,7 +90,6 @@ class AuthenticationServiceTest {
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(buildSecurityUserForTest());
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(buildUserForTest()));
-        when(jwtUtils.generateToken("ElizabethFleming6AUTu3")).thenReturn("fake-token");
 
         AuthenticationResponseDto responseDto = authenticationService.loginUser(
                 new LoginRequestDto("ElizabethFleming6AUTu3", "password"));
@@ -124,7 +118,6 @@ class AuthenticationServiceTest {
         assertEquals("ElizabethFleming6AUTu3", authenticationResponseDto.username());
         assertEquals("Elizabeth", authenticationResponseDto.firstName());
         assertEquals("Fleming", authenticationResponseDto.lastName());
-        assertEquals("fake-token", authenticationResponseDto.token());
     }
 
     private SecurityUser buildSecurityUserForTest() {

@@ -8,7 +8,6 @@ import com.sheen.joe.bankingsystem.exception.InvalidRequestException;
 import com.sheen.joe.bankingsystem.exception.ResourceNotFoundException;
 import com.sheen.joe.bankingsystem.mapper.AuthenticationMapper;
 import com.sheen.joe.bankingsystem.repository.UserRepository;
-import com.sheen.joe.bankingsystem.security.JwtUtils;
 import com.sheen.joe.bankingsystem.security.SecurityUser;
 import com.sheen.joe.bankingsystem.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +24,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
 
-    private final JwtUtils jwtUtils;
-
     private final AuthenticationMapper mapper;
 
     private final AuthenticationManager authenticationManager;
@@ -38,8 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new InvalidRequestException("Phone number or email already registered");
         }
         User user = userRepository.save(mapper.toUser(registerRequestDto));
-        String token = jwtUtils.generateToken(user.getUsername());
-        return mapper.toAuthenticationResponse(user, token);
+        return mapper.toAuthenticationResponse(user);
     }
 
     @Override
@@ -49,8 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UUID userId = ((SecurityUser) authentication.getPrincipal()).getId();
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("User with ID: %s not found", userId)));
-        String token = jwtUtils.generateToken(user.getUsername());
-        return mapper.toAuthenticationResponse(user, token);
+        return mapper.toAuthenticationResponse(user);
     }
 
     private boolean validateRegistrationRequest(String phoneNumber, String email) {
