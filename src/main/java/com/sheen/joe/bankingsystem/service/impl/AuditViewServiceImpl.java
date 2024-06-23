@@ -28,7 +28,7 @@ public class AuditViewServiceImpl implements AuditViewService {
 
     @Override
     public CollectionResponseDto<AuditSummaryDto> getAllForEntityId(int pageNumber, int pageSize, String entityId, String sortProperty) {
-        String author = SecurityUtils.getUsernameFromSecurityContext();
+        String author = SecurityUtils.getUserIdFromSecurityContext().toString();
         Sort sort = Sort.by(new Order(Direction.ASC, sortProperty));
         Pageable paging = PageRequest.of(pageNumber, pageSize, sort);
 
@@ -41,7 +41,7 @@ public class AuditViewServiceImpl implements AuditViewService {
 
     @Override
     public AuditResponseDto getByCommitId(Long commitId) {
-        String author = SecurityUtils.getUsernameFromSecurityContext();
+        String author = SecurityUtils.getUserIdFromSecurityContext().toString();
         AuditView auditView = auditViewRepository.findByCommitIdAndAuthor(commitId, author).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("Audit record with ID: %s for user not found", commitId)));
         return auditViewMapper.toAuditResponse(auditView);

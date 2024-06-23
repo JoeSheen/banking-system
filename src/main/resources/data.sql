@@ -20,4 +20,4 @@ SELECT jv_commit.commit_id,
 FROM jv_commit
 JOIN jv_snapshot ON jv_commit.commit_pk = jv_snapshot.commit_fk
 JOIN jv_global_id ON jv_snapshot.global_id_fk = jv_global_id.global_id_pk
-LEFT JOIN banking_user bu ON jv_commit.author = bu.username;
+LEFT JOIN banking_user bu ON jv_commit.author = CAST(bu.id AS VARCHAR);

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,33 +23,40 @@ class SecurityUtilsTest {
     @Mock
     private SecurityContext securityContext;
 
-    @Mock
     private Authentication authentication;
-
-    private SecurityUser principal;
 
     @BeforeEach
     void setUp() {
         SecurityContextHolder.setContext(securityContext);
 
         UUID id = UUID.fromString("b6934164-f725-4c56-a570-eef3119517fa");
-        principal = new SecurityUser(id, Set.of(UserRole.USER_ROLE), "password", "WillHawks7Ft4q4");
+        SecurityUser principal = new SecurityUser(id, Set.of(UserRole.USER_ROLE), "password", "WillHawks7Ft4q4");
+
+        authentication = new TestingAuthenticationToken(principal, null, principal.getAuthorities());
+    }
+
+    @Test
+    void testIsAuthenticatedReturnsFalse() {
+        authentication = new TestingAuthenticationToken(null, null, "UNKNOWN_AUTHORITY");
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        boolean result = SecurityUtils.isAuthenticated();
+        assertFalse(result);
+    }
+
+    @Test
+    void testIsAuthenticatedReturnsTrue() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        boolean result = SecurityUtils.isAuthenticated();
+        assertTrue(result);
     }
 
     @Test
     void testGetUserIdFromSecurityContext() {
         when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(principal);
 
         UUID id = SecurityUtils.getUserIdFromSecurityContext();
         assertEquals(UUID.fromString("b6934164-f725-4c56-a570-eef3119517fa"), id);
-    }
-
-    @Test
-    void testGetUsernameFromSecurityContext() {
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(principal);
-
-        assertEquals("WillHawks7Ft4q4", SecurityUtils.getUsernameFromSecurityContext());
     }
 }
