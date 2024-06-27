@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -58,7 +59,8 @@ public class ControllerAdviceExceptionHandler {
     }
 
     @ExceptionHandler(value = { MethodArgumentNotValidException.class })
-    public ResponseEntity<ValidationHandlerResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ValidationHandlerResponse> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException exception) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         LocalDateTime timestamp = LocalDateTime.now(ZONE_ID);
 
@@ -70,6 +72,17 @@ public class ControllerAdviceExceptionHandler {
         });
         ValidationHandlerResponse response = new ValidationHandlerResponse(errors, badRequest, timestamp);
         log.info("Method argument not valid exception: {} at: {}", response.errors(), response.timestamp());
+        return new ResponseEntity<>(response, badRequest);
+    }
+
+    @ExceptionHandler(value = { MethodArgumentTypeMismatchException.class })
+    public ResponseEntity<HandlerResponse> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException exception) {
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        LocalDateTime timestamp = LocalDateTime.now(ZONE_ID);
+        HandlerResponse response = new HandlerResponse(String.format("Failed to convert value of field '%s'",
+                exception.getPropertyName()), badRequest, timestamp);
+        log.info("Type mismatch error: {} at: {}", response.errorMessage(), response.timestamp());
         return new ResponseEntity<>(response, badRequest);
     }
 }

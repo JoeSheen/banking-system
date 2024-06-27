@@ -81,6 +81,16 @@ class ControllerAdviceExceptionHandlerMvcTest {
                 .content(toJsonString(accountRequestDto))).andExpect(status().isBadRequest());
     }
 
+    @Test
+    void testHandleMethodArgumentTypeMismatchException() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/accounts/null")
+                .accept(MediaType.ALL)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
+
+        String expectedErrorMessage ="\"errorMessage\":\"Failed to convert value of field 'accountId'\"";
+        String expectedStatus = "\"status\":\"BAD_REQUEST\"";
+        assertMvcResult(result, expectedErrorMessage, expectedStatus);
+    }
+
     private void assertMvcResult(MvcResult result, String expectedErrorMessage,
             String expectedStatus) throws UnsupportedEncodingException {
         assertNotNull(result);
